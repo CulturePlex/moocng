@@ -40,8 +40,12 @@ def home(request):
 def flatpage(request, page=""):
     # Translate flatpages
     lang = request.LANGUAGE_CODE.lower()
-    fpage = get_object_or_404(FlatPage, url__exact=("/%s-%s/" % (page, lang)),
-                              sites__id__exact=settings.SITE_ID)
+    try:
+        fpage = FlatPage.objects.get(url__exact=("/%s-%s/" % (page, lang)),
+                                     sites__id__exact=settings.SITE_ID)
+    except FlatPage.DoesNotExist:
+        fpage = get_object_or_404(FlatPage, url__exact=("/%s/" % page),
+                                  sites__id__exact=settings.SITE_ID)
     return render_flatpage(request, fpage)
 
 
