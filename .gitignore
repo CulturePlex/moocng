@@ -1,6 +1,7 @@
 build/
 dist/
 moocng/local_settings.py
+moocng/*.sqlite
 docs/build
 
 *.pyc
