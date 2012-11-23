@@ -44,6 +44,17 @@
                 {{ course.intended_audience|safe }}
             </div>
         {% endif %}
+
+        {% if course.institutions %}
+            <div class="box">
+                <h2>{% trans "Availability" %}</h2>
+                <ul>
+                    {% for institution in course.institutions.all %}
+                        {{ institution.name }}: {{ institution.domains}}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
     </div>
 
     <div class="span4">
