@@ -7,3 +7,6 @@ docs/build
 *.pyc
 *.egg-info
 *~
+
+apache*
+mongo*
