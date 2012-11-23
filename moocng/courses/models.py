@@ -48,7 +48,7 @@ class Institution(Sortable):
     name = models.CharField(verbose_name=_(u'Name'), max_length=200)
     slug = models.SlugField(verbose_name=_(u'Slug'))
     description = HTMLField(verbose_name=_(u'Description'))
-    url = models.URLField(verbose_name=_(u'URL'), verify_exists=False,
+    web = models.URLField(verbose_name=_(u'Website'), verify_exists=False,
                           max_length=200)
     address = models.CharField(verbose_name=_(u'Address'), max_length=200,
                                blank=True, null=True)

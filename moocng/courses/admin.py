@@ -47,6 +47,7 @@ logger = logging.getLogger(__name__)
 class InstitutionAdmin(SortableAdmin):
 
     prepopulated_fields = {'slug': ('name', )}
+    list_display = ('name', 'domains', 'web', 'contact')
 
 
 class CourseAdmin(SortableAdmin):
