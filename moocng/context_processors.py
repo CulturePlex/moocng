@@ -15,6 +15,7 @@
 from django.contrib.sites.models import Site, RequestSite
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from django.core.urlresolvers import NoReverseMatch, reverse
 from django.db import models
 
 
@@ -67,24 +68,53 @@ def google_analytics(request):
     return context
 
 
-def idp_urls(request):
+def accounts_urls(request):
     try:
         registry_url = settings.REGISTRY_URL
     except AttributeError:
-        registry_url = '#'
+        try:
+            registry_url = reverse("userena_signup")
+        except NoReverseMatch:
+            registry_url = '#'
 
     try:
         profile_url = settings.PROFILE_URL
     except AttributeError:
-        profile_url = '#'
+        try:
+            mapping = {'username': request.user.username}
+            profile_url = settings.LOGIN_REDIRECT_URL % mapping
+        except AttributeError:
+            profile_url = '#'
 
     try:
         changepw_url = settings.CHANGEPW_URL
     except AttributeError:
-        changepw_url = '#'
+        try:
+            changepw_url = reverse("userena_password_change",
+                                   args=[request.user.username])
+        except NoReverseMatch:
+            changepw_url = '#'
+
+    try:
+        logout_url = reverse("saml2_logout")
+    except NoReverseMatch:
+        try:
+            logout_url = settings.LOGOUT_URL
+        except AttributeError:
+            logout_url = '#'
+
+    try:
+        login_url = reverse("saml2_login")
+    except NoReverseMatch:
+        try:
+            login_url = settings.LOGIN_URL
+        except AttributeError:
+            login_url = '#'
 
     return {
         'registry_url': registry_url,
         'profile_url': profile_url,
         'changepw_url': changepw_url,
+        'logout_url': logout_url,
+        'login_url': login_url,
     }

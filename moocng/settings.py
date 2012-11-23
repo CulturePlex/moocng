@@ -21,17 +21,17 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('Admin', 'admin@eopenmooc.org'),
+    ('Admin', 'courses@cultureplex.ca'),
 )
 
 MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'moocng',                # Or path to database file if using sqlite3.
-        'USER': 'moocng',                # Not used with sqlite3.
-        'PASSWORD': 'moocng',            # Not used with sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': os.path.join(BASEDIR, 'moocng.sqlite'),                # Or path to database file if using sqlite3.
+        'USER': '',                # Not used with sqlite3.
+        'PASSWORD': '',            # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
@@ -43,12 +43,12 @@ MONGODB_URI = 'mongodb://localhost:27017/moocng'
 API_LIMIT_PER_PAGE = 0
 
 #SMTP server
-EMAIL_HOST = 'idp.openmooc.org'
-SERVER_EMAIL = 'idp.openmooc.org'
-DEFAULT_FROM_EMAIL = 'info@openmooc.org'
-EMAIL_PORT = 25
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+# EMAIL_HOST = 'idp.openmooc.org'
+# SERVER_EMAIL = 'idp.openmooc.org'
+# DEFAULT_FROM_EMAIL = 'info@openmooc.org'
+# EMAIL_PORT = 25
+# EMAIL_HOST_USER = ''
+# EMAIL_HOST_PASSWORD = ''
 
 
 # Local time zone for this installation. Choices can be found here:
@@ -58,7 +58,7 @@ EMAIL_HOST_PASSWORD = ''
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = 'America/Toronto'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -105,19 +105,19 @@ MEDIA_URL = '/media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = os.path.join(BASEDIR, 'collected_static')
+STATIC_ROOT = os.path.join(BASEDIR, 'static')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
 
-# Additional locations of static files
-STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(BASEDIR, 'static'),
-)
+# # Additional locations of static files
+# STATICFILES_DIRS = (
+#     # Put strings here, like "/home/html/static" or "C:/www/django/static".
+#     # Always use forward slashes, even on Windows.
+#     # Don't forget to use absolute paths, not relative paths.
+#     os.path.join(BASEDIR, 'static'),
+# )
 
 # List of finder classes that know how to find static files in
 # various locations.
@@ -180,7 +180,10 @@ INSTALLED_APPS = (
     'moocng.portal',
     'moocng.videos',
     'moocng.complaints',
-    'djangosaml2',
+    'moocng.accounts',
+    'userena',
+    'guardian',
+    #'djangosaml2',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -253,13 +256,14 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
     'moocng.context_processors.site',
     'moocng.context_processors.theme',
-    'moocng.context_processors.idp_urls',
+    'moocng.context_processors.accounts_urls',
     'moocng.context_processors.google_analytics',
 )
 
 AUTHENTICATION_BACKENDS = (
+    'userena.backends.UserenaAuthenticationBackend',
     'django.contrib.auth.backends.ModelBackend',
-    'moocng.courses.backends.Saml2BackendExtension',
+    #'moocng.courses.backends.Saml2BackendExtension',
 )
 
 FIXTURE_DIRS = (
@@ -300,106 +304,112 @@ djcelery.setup_loader()
 
 BROKER_URL = 'amqp://moocng:moocngpassword@localhost:5672/moocng'
 
-REGISTRY_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/newUser.php'
-PROFILE_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/reviewUser.php'
-CHANGEPW_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/changePassword.php'
-ASKBOT_URL_TEMPLATE = 'https://questions.example.com/%s/'
+# Userena settings
+ANONYMOUS_USER_ID = -1
+AUTH_PROFILE_MODULE = 'accounts.UserProfile'
+LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
+LOGIN_URL = '/accounts/signin/'
+LOGOUT_URL = '/accounts/signout/'
 
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-LOGIN_URL = '/saml2/login/'
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_URL = '/saml2/logout/'
-LOGOUT_REDIRECT_URL = '/'
+# SAML settings
+# REGISTRY_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/newUser.php'
+# PROFILE_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/reviewUser.php'
+# CHANGEPW_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/changePassword.php'
+# ASKBOT_URL_TEMPLATE = 'https://questions.example.com/%s/'
 
-SAML_CREATE_UNKNOWN_USER = True
-SAML_ATTRIBUTE_MAPPING = {
-    'mail': ('username', 'email', ),
-    'cn': ('first_name', ),
-    'sn': ('last_name', ),
-    'eduPersonAffiliation': ('groups', ),
-    }
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# LOGIN_URL = '/saml2/login/'
+# LOGIN_REDIRECT_URL = '/'
 
-import saml2
+# SAML_CREATE_UNKNOWN_USER = True
+# SAML_ATTRIBUTE_MAPPING = {
+#     'mail': ('username', 'email', ),
+#     'cn': ('first_name', ),
+#     'sn': ('last_name', ),
+#     'eduPersonAffiliation': ('groups', ),
+#     }
 
-SAML_CONFIG = {
-    # full path to the xmlsec1 binary programm
-    'xmlsec_binary': '/usr/bin/xmlsec1',
+# import saml2
 
-    # your entity id, usually your subdomain plus the url to the metadata view
-    'entityid': 'https://moocng.example.com/saml2/metadata/',
+# SAML_CONFIG = {
+#     # full path to the xmlsec1 binary programm
+#     'xmlsec_binary': '/usr/bin/xmlsec1',
 
-    # directory with attribute mapping
-    'attribute_map_dir': os.path.join(BASEDIR, 'attributemaps'),
+#     # your entity id, usually your subdomain plus the url to the metadata view
+#     'entityid': 'https://moocng.example.com/saml2/metadata/',
 
-    # this block states what services we provide
-    'service': {
-        # we are just a lonely SP
-        'sp' : {
-            'name': 'Moocng SP',
-            'endpoints': {
-                # url and binding to the assetion consumer service view
-                # do not change the binding or service name
-                'assertion_consumer_service': [
-                    ('https://moocng.example.com/saml2/acs/', saml2.BINDING_HTTP_POST),
-                    ],
-                # url and binding to the single logout service view
-                # do not change the binding or service name
-                'single_logout_service': [
-                    ('https://moocng.example.com/saml2/ls/', saml2.BINDING_HTTP_REDIRECT),
-                    ],
-                },
+#     # directory with attribute mapping
+#     'attribute_map_dir': os.path.join(BASEDIR, 'attributemaps'),
 
-            # in this section the list of IdPs we talk to are defined
-            'idp': {
-                # we do not need a WAYF service since there is
-                # only an IdP defined here. This IdP should be
-                # present in our metadata
+#     # this block states what services we provide
+#     'service': {
+#         # we are just a lonely SP
+#         'sp' : {
+#             'name': 'Moocng SP',
+#             'endpoints': {
+#                 # url and binding to the assetion consumer service view
+#                 # do not change the binding or service name
+#                 'assertion_consumer_service': [
+#                     ('https://moocng.example.com/saml2/acs/', saml2.BINDING_HTTP_POST),
+#                     ],
+#                 # url and binding to the single logout service view
+#                 # do not change the binding or service name
+#                 'single_logout_service': [
+#                     ('https://moocng.example.com/saml2/ls/', saml2.BINDING_HTTP_REDIRECT),
+#                     ],
+#                 },
 
-                # the keys of this dictionary are entity ids
-                'https://idp.example.com/simplesaml/saml2/idp/metadata.php': {
-                    'single_sign_on_service': {
-                        saml2.BINDING_HTTP_REDIRECT: 'https://idp.example.com/simplesaml/saml2/idp/SSOService.php',
-                        },
-                    'single_logout_service': {
-                        saml2.BINDING_HTTP_REDIRECT: 'https://idp.example.com/simplesaml/saml2/idp/SingleLogoutService.php',
-                        },
-                    },
-                },
-            },
-        },
+#             # in this section the list of IdPs we talk to are defined
+#             'idp': {
+#                 # we do not need a WAYF service since there is
+#                 # only an IdP defined here. This IdP should be
+#                 # present in our metadata
 
-    # where the remote metadata is stored
-    'metadata': {
-        'local': [os.path.join(BASEDIR, 'remote_metadata.xml')],
-        },
+#                 # the keys of this dictionary are entity ids
+#                 'https://idp.example.com/simplesaml/saml2/idp/metadata.php': {
+#                     'single_sign_on_service': {
+#                         saml2.BINDING_HTTP_REDIRECT: 'https://idp.example.com/simplesaml/saml2/idp/SSOService.php',
+#                         },
+#                     'single_logout_service': {
+#                         saml2.BINDING_HTTP_REDIRECT: 'https://idp.example.com/simplesaml/saml2/idp/SingleLogoutService.php',
+#                         },
+#                     },
+#                 },
+#             },
+#         },
 
-    # set to 1 to output debugging information
-    'debug': 1,
+#     # where the remote metadata is stored
+#     'metadata': {
+#         'local': [os.path.join(BASEDIR, 'remote_metadata.xml')],
+#         },
 
-    # certificate
-    'key_file': os.path.join(BASEDIR, 'mycert.key'),  # private part
-    'cert_file': os.path.join(BASEDIR, 'mycert.pem'),  # public part
+#     # set to 1 to output debugging information
+#     'debug': 1,
 
-    # own metadata settings
-    'contact_person': [
-        {'given_name': 'Sysadmin',
-         'sur_name': '',
-         'company': 'Example CO',
-         'email_address': 'sysadmin@example.com',
-         'contact_type': 'technical'},
-        {'given_name': 'Boss',
-         'sur_name': '',
-         'company': 'Example CO',
-         'email_address': 'admin@example.com',
-         'contact_type': 'administrative'},
-        ],
-    # you can set multilanguage information here
-    'organization': {
-        'name': [('Example CO', 'es'), ('Example CO', 'en')],
-        'display_name': [('Example', 'es'), ('Example', 'en')],
-        'url': [('http://www.example.com', 'es'), ('http://www.example.com', 'en')],
-        },
-    }
+#     # certificate
+#     'key_file': os.path.join(BASEDIR, 'mycert.key'),  # private part
+#     'cert_file': os.path.join(BASEDIR, 'mycert.pem'),  # public part
+
+#     # own metadata settings
+#     'contact_person': [
+#         {'given_name': 'Sysadmin',
+#          'sur_name': '',
+#          'company': 'Example CO',
+#          'email_address': 'sysadmin@example.com',
+#          'contact_type': 'technical'},
+#         {'given_name': 'Boss',
+#          'sur_name': '',
+#          'company': 'Example CO',
+#          'email_address': 'admin@example.com',
+#          'contact_type': 'administrative'},
+#         ],
+#     # you can set multilanguage information here
+#     'organization': {
+#         'name': [('Example CO', 'es'), ('Example CO', 'en')],
+#         'display_name': [('Example', 'es'), ('Example', 'en')],
+#         'url': [('http://www.example.com', 'es'), ('http://www.example.com', 'en')],
+#         },
+#     }
 
 try:
     from local_settings import *

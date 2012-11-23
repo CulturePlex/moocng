@@ -39,12 +39,24 @@ urlpatterns = patterns(
 
     url(r'^api/', include('moocng.api.urls')),
 
-    url(r'^saml2/ls/$', 'djangosaml2.views.logout_service', name='saml2_ls',
-        kwargs={'next_page': settings.LOGOUT_REDIRECT_URL}),
-    url(r'^saml2/', include('djangosaml2.urls')),
-
     url(r'^complaints/', include('moocng.complaints.urls')),
 )
+
+if "moocng.accounts" in settings.INSTALLED_APPS:
+    from moocng.accounts.forms import UserProfileEditForm
+    urlpatterns += patterns(
+        url(r'^accounts/(?P<username>[\w-]+)/edit/',
+            "userena.views.profile_edit",
+            {'edit_profile_form': UserProfileEditForm}),
+        url(r'^accounts/', include('userena.urls')),
+    )
+else:
+    urlpatterns += (
+        url(r'^saml2/ls/$', 'djangosaml2.views.logout_service',
+            name='saml2_ls',
+            kwargs={'next_page': settings.LOGOUT_REDIRECT_URL}),
+        url(r'^saml2/', include('djangosaml2.urls')),
+    )
 
 if settings.DEBUG:
     from django.views.static import serve
