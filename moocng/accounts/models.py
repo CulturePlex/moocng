@@ -2,6 +2,8 @@
 import datetime
 
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.utils.translation import gettext as _
 
@@ -40,3 +42,14 @@ class UserProfile(UserenaLanguageBaseProfile):
                 return today.year - self.birth_date.year - 1
             else:
                 return today.year - self.birth_date.year
+
+
+@receiver(post_save, sender=User)
+def create_profile_account(*args, **kwargs):
+    user = kwargs.get("instance", None)
+    created = kwargs.get("created", False)
+    if user and created:
+        try:
+            user.get_profile()
+        except UserProfile.DoesNotExist:
+            UserProfile.objects.create(user=user)
