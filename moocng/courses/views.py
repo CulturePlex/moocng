@@ -18,7 +18,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.flatpages.models import FlatPage
 from django.contrib.flatpages.views import render_flatpage
-from django.contrib.messages import success
+from django.contrib.messages import success, error
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import (get_object_or_404, get_list_or_404,
@@ -54,7 +54,16 @@ def course_overview(request, course_slug):
         is_enrolled = False
 
     if request.method == 'POST':
-        if not is_enrolled:
+        is_member = (course.institutions and
+                     course.institutions.is_member(request.user))
+        if not is_member:
+            institutions = [i.name for i in course.institutions.all()]
+            error(request,
+                  _(u'Unfortunately, this course is only available for '
+                    u'%(institutions)s. Change your e-mail or contact to a '
+                    u'teacher.')
+                    % {'institutions': u", ".join(institutions)})
+        elif not is_enrolled:
             course.students.add(request.user)
             course.save()
             success(request,
