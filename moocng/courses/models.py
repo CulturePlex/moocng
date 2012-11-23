@@ -27,6 +27,46 @@ from moocng.videos.tasks import process_video_task
 from moocng.videos.utils import extract_YT_video_id
 
 
+class InstitutionManager(models.Manager):
+
+    def is_member(self, user):
+        if user.is_superuser:
+            return True
+        if u"@" in user.email:
+            email = user.email.split(u"@")[1]
+        else:
+            return False
+        qs = self.get_query_set()
+        for institution in qs.all():
+            if email not in institution.domains:
+                return False
+        return True
+
+
+class Institution(Sortable):
+
+    name = models.CharField(verbose_name=_(u'Name'), max_length=200)
+    slug = models.SlugField(verbose_name=_(u'Slug'))
+    description = HTMLField(verbose_name=_(u'Description'))
+    url = models.URLField(verbose_name=_(u'URL'), verify_exists=False,
+                          max_length=200)
+    address = models.CharField(verbose_name=_(u'Address'), max_length=200,
+                               blank=True, null=True)
+    contact = models.EmailField(verbose_name=_(u'Contact e-mail'),
+                                max_length=200, blank=True, null=True)
+    domains = models.CharField(verbose_name=_(u'Domains'), max_length=200,
+                               help_text=_(u'A list of e-mail domains. '
+                                           u'Ex.: uwo.ca, us.es'))
+    objects = InstitutionManager()
+
+    class Meta(Sortable.Meta):
+        verbose_name = _(u'institution')
+        verbose_name_plural = _(u'institutions')
+
+    def __unicode__(self):
+        return u"%s (%s)" % (self.name, self.domains)
+
+
 class Course(Sortable):
 
     name = models.CharField(verbose_name=_(u'Name'), max_length=200)
@@ -51,6 +91,15 @@ class Course(Sortable):
     students = models.ManyToManyField(User, verbose_name=_(u'Students'),
                                       related_name='courses_as_student',
                                       blank=True)
+    institutions = models.ManyToManyField(Institution,
+                                      verbose_name=_(u'Institutions'),
+                                      related_name='courses',
+                                      blank=True,
+                                      help_text=_(u'Allowed institutions in '
+                                                  u'this course. Leave it '
+                                                  u'blank to make it available '
+                                                  u'for any registered '
+                                                  u'student.'))
     promotion_video = models.URLField(verbose_name=_(u'Promotion video'),
                                       blank=True)
 

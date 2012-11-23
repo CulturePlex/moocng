@@ -34,13 +34,19 @@ from celery.task.control import inspect
 from adminsortable.admin import SortableAdmin
 
 from moocng.courses.forms import UnitForm, AttachmentForm
-from moocng.courses.models import Course, Announcement, Unit, KnowledgeQuantum
+from moocng.courses.models import (Institution, Course, Announcement, Unit,
+                                   KnowledgeQuantum)
 from moocng.courses.models import Question, Option, Attachment
 from moocng.courses.widgets import ImageReadOnlyWidget
 from moocng.videos.tasks import process_video_task
 
 
 logger = logging.getLogger(__name__)
+
+
+class InstitutionAdmin(SortableAdmin):
+
+    prepopulated_fields = {'slug': ('name', )}
 
 
 class CourseAdmin(SortableAdmin):
@@ -275,6 +281,7 @@ class OptionAdmin(admin.ModelAdmin):
     list_filter = ('question', )
 
 
+admin.site.register(Institution, InstitutionAdmin)
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Announcement, AnnouncementAdmin)
 admin.site.register(Unit, UnitAdmin)
