@@ -32,13 +32,13 @@ class InstitutionManager(models.Manager):
     def is_member(self, user):
         if user.is_superuser:
             return True
-        if u"@" in user.email:
-            email = user.email.split(u"@")[1]
+        if u"@" in user.email and not user.email.endswith(u"@"):
+            mail_domain = user.email.split(u"@")[1]
         else:
             return False
         qs = self.get_query_set()
         for institution in qs.all():
-            if email not in institution.domains:
+            if mail_domain not in institution.domains:
                 return False
         return True
 
@@ -48,8 +48,8 @@ class Institution(Sortable):
     name = models.CharField(verbose_name=_(u'Name'), max_length=200)
     slug = models.SlugField(verbose_name=_(u'Slug'))
     description = HTMLField(verbose_name=_(u'Description'))
-    web = models.URLField(verbose_name=_(u'Website'), verify_exists=False,
-                          max_length=200)
+    website = models.URLField(verbose_name=_(u'Website'), verify_exists=False,
+                              blank=True, null=True, max_length=200)
     address = models.CharField(verbose_name=_(u'Address'), max_length=200,
                                blank=True, null=True)
     contact = models.EmailField(verbose_name=_(u'Contact e-mail'),
