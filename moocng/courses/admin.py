@@ -14,6 +14,7 @@
 
 import logging
 
+from django.conf import settings
 from django.conf.urls import patterns, url
 from django.contrib import admin
 from django.contrib.admin.util import unquote
@@ -96,9 +97,10 @@ class QuestionAdmin(admin.ModelAdmin):
 
     list_display = ('kq', 'solution')
     list_filter = ('kq', )
-    formfield_overrides = {
-        models.ImageField: {'widget': ImageReadOnlyWidget},
-    }
+    if not getattr(settings, "ALLOW_UPLOAD_QUESTION_IMAGE", False):
+        formfield_overrides = {
+            models.ImageField: {'widget': ImageReadOnlyWidget},
+        }
 
     def get_urls(self):
         return patterns(

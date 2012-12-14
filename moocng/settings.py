@@ -295,6 +295,7 @@ MOOCNG_THEME = {
     }
 
 #SHOW_TOS = True
+ALLOW_UPLOAD_QUESTION_IMAGE = True
 
 FFMPEG = '/usr/bin/ffmpeg'
 
