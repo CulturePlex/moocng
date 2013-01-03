@@ -258,6 +258,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'moocng.context_processors.theme',
     'moocng.context_processors.accounts_urls',
     'moocng.context_processors.google_analytics',
+    'moocng.context_processors.show_grouped_teachers',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -296,6 +297,7 @@ MOOCNG_THEME = {
 
 #SHOW_TOS = True
 ALLOW_UPLOAD_QUESTION_IMAGE = True
+SHOW_GROUPED_TEACHERS = True
 
 FFMPEG = '/usr/bin/ffmpeg'
 

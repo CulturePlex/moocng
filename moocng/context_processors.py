@@ -118,3 +118,12 @@ def accounts_urls(request):
         'logout_url': logout_url,
         'login_url': login_url,
     }
+
+
+def show_grouped_teachers(request):
+    context = {}
+    try:
+        context['show_grouped_teachers'] = settings.SHOW_GROUPED_TEACHERS
+    except AttributeError:
+        context['show_grouped_teachers'] = ''
+    return context
