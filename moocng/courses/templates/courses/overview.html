@@ -132,6 +132,9 @@
                      {% endif %}
                 {% endfor %}
             </ul>
+            {% if course.syllabus.url %}
+                <a href="course.syllabus.url">{% trans "Download the complete syllabus" %}</a>
+            {% endif %}
         </div>
 
         <div class="box">

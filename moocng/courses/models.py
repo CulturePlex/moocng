@@ -100,6 +100,9 @@ class Course(Sortable):
                                                   u'blank to make it available '
                                                   u'for any registered '
                                                   u'student.'))
+    # syllabus = models.FileField(verbose_name=_(u'Syllabus'),
+    #                             blank=True, null=True,
+    #                             upload_to='syllabi')
     promotion_video = models.URLField(verbose_name=_(u'Promotion video'),
                                       blank=True)
 
