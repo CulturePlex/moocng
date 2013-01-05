@@ -308,7 +308,8 @@ ALLOW_PUBLIC_COURSE_CREATION = False
 import djcelery
 djcelery.setup_loader()
 
-BROKER_URL = 'amqp://moocng:moocngpassword@localhost:5672/moocng'
+#BROKER_URL = 'amqp://moocng:moocngpassword@localhost:5672/moocng'
+BROKER_URL = 'mongodb://localhost:27017/broker'
 
 # Userena settings
 ANONYMOUS_USER_ID = -1
