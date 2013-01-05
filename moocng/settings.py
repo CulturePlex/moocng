@@ -20,6 +20,8 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+FFMPEG_DEBUG = DEBUG
+
 ADMINS = (
     ('Admin', 'courses@cultureplex.ca'),
 )
@@ -58,7 +60,7 @@ API_LIMIT_PER_PAGE = 0
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Toronto'
+TIME_ZONE = 'America/Chicago'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -105,19 +107,19 @@ MEDIA_URL = '/media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = os.path.join(BASEDIR, 'static')
+STATIC_ROOT = os.path.join(BASEDIR, 'collected_static')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
 STATIC_URL = '/static/'
 
-# # Additional locations of static files
-# STATICFILES_DIRS = (
-#     # Put strings here, like "/home/html/static" or "C:/www/django/static".
-#     # Always use forward slashes, even on Windows.
-#     # Don't forget to use absolute paths, not relative paths.
-#     os.path.join(BASEDIR, 'static'),
-# )
+# Additional locations of static files
+STATICFILES_DIRS = (
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+    os.path.join(BASEDIR, 'static'),
+)
 
 # List of finder classes that know how to find static files in
 # various locations.
@@ -180,6 +182,7 @@ INSTALLED_APPS = (
     'moocng.portal',
     'moocng.videos',
     'moocng.complaints',
+    'moocng.teacheradmin',
     'moocng.accounts',
     'userena',
     'guardian',
@@ -256,9 +259,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
     'moocng.context_processors.site',
     'moocng.context_processors.theme',
-    'moocng.context_processors.accounts_urls',
-    'moocng.context_processors.google_analytics',
-    'moocng.context_processors.show_grouped_teachers',
+    'moocng.context_processors.extra_settings',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -297,9 +298,11 @@ MOOCNG_THEME = {
 
 #SHOW_TOS = True
 ALLOW_UPLOAD_QUESTION_IMAGE = True
-SHOW_GROUPED_TEACHERS = True
 
 FFMPEG = '/usr/bin/ffmpeg'
+
+# Let authenticated users create their own courses
+ALLOW_PUBLIC_COURSE_CREATION = False
 
 # Celery settings
 import djcelery

@@ -68,7 +68,7 @@ def google_analytics(request):
     return context
 
 
-def accounts_urls(request):
+def extra_settings(request):
     try:
         registry_url = settings.REGISTRY_URL
     except AttributeError:
@@ -111,19 +111,17 @@ def accounts_urls(request):
         except AttributeError:
             login_url = '#'
 
+    try:
+        sandbox = settings.ALLOW_PUBLIC_COURSE_CREATION
+    except AttributeError:
+        sandbox = ''
+
     return {
         'registry_url': registry_url,
         'profile_url': profile_url,
         'changepw_url': changepw_url,
+        'google_analytics': google_analytics,
         'logout_url': logout_url,
         'login_url': login_url,
+        'sandbox': sandbox,
     }
-
-
-def show_grouped_teachers(request):
-    context = {}
-    try:
-        context['show_grouped_teachers'] = settings.SHOW_GROUPED_TEACHERS
-    except AttributeError:
-        context['show_grouped_teachers'] = ''
-    return context

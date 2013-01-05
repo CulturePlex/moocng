@@ -44,17 +44,6 @@
                 {{ course.intended_audience|safe }}
             </div>
         {% endif %}
-
-        {% if course.institutions.count %}
-            <div class="box">
-                <h2>{% trans "Availability" %}</h2>
-                <ul>
-                    {% for institution in course.institutions.all %}
-                        {{ institution.name }}: {{ institution.domains}}
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endif %}
     </div>
 
     <div class="span4">
@@ -79,31 +68,21 @@
 
         <div class="box">
             <h2>{% trans "Teachers" %}</h2>
-            {% if show_grouped_teachers %}
-                {% regroup course.teachers.all by groups as teachers %}
-                {% for teacher in teachers %}
-                    {% if teacher.list %}
-                        <dt>{{ teacher.grouper.all|join:", "|capfirst }}</dt>
-                        <dd><ul class="unstyled">
-                        {% for item in teacher.list %}
-                            <li class="teacher">
-                                {% gravatar_img_for_user item 50 %}
-                                <strong style="width: 200px;">{% firstof item.get_full_name item.username %}</strong>
-                            </li>
-                        {% endfor %}
-                        </ul></dd>
-                    {% endif %}
-                {% endfor %}
-            {% else %}
-                <ul class="unstyled">
-                {% for teacher in course.teachers.all %}
+            <ul class="unstyled">
+                <li class="teacher">
+                    {% gravatar_img_for_user course.owner 50 %}
+                    <strong>{% firstof course.owner.get_full_name course.owner.username %}</strong>
+                </li>
+
+            {% for teacher in course.teachers.all %}
+                {% if teacher.username != course.owner.username %}
                     <li class="teacher">
                         {% gravatar_img_for_user teacher 50 %}
                         <strong>{% firstof teacher.get_full_name teacher.username %}</strong>
                     </li>
-                {% endfor %}
-                </ul>
-            {% endif %}
+                {% endif %}
+            {% endfor %}
+            </ul>
             <div class="visual-clear"></div>
         </div>
 

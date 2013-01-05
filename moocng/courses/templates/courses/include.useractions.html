@@ -26,6 +26,13 @@
         <a href="{% url admin:index %}">{% trans "Admin interface" %}</a>
       </li>
       {% endif %}
+      {% if user.is_staff or sandbox %}
+      {% if sandbox %}<li class="divider"></li>{% endif %}
+      <li>
+        <!-- TODO -->
+        <a href="/admin/courses/course/add">{% trans "Create course" %}</a>
+      </li>
+      {% endif %}
       <li class="divider"></li>
       <li><a href="{{ logout_url }}">{% trans "Log out" %}</a></li>
     </ul>
