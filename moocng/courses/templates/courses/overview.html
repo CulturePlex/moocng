@@ -128,8 +128,8 @@
                      {% endif %}
                 {% endfor %}
             </ul>
-            {% if course.syllabus.url %}
-                <a href="course.syllabus.url">{% trans "Download the complete syllabus" %}</a>
+            {% if course.syllabus and course.syllabus.url %}
+                <a href="{{ course.syllabus.url }}">{% trans "Download the complete syllabus" %}</a>
             {% endif %}
         </div>
 

@@ -37,7 +37,7 @@
     <p>{% trans "Your changes were saved." %}</p>
 </div>
 {% endif %}{% endif %}
-<form action="" method="post">{% csrf_token %}
+<form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
     <div class="row">
         <div class="span5">
             <p><label for="id_name">{% trans "Name" %}:</label> <input id="id_name" type="text" name="name" value="{{ course.name }}" maxlength="200" class="input-xlarge" /></p>
@@ -53,6 +53,13 @@
     <p><label for="id_intended_audience">{% trans "Intended audience" %}:</label> <textarea rows="10" cols="40" name="intended_audience" id="id_intended_audience">{{ course.intended_audience }}</textarea></p>
     <p><label for="id_estimated_effort">{% trans "Estimated effort" %}:</label> <textarea rows="10" cols="40" name="estimated_effort" id="id_estimated_effort">{{ course.estimated_effort }}</textarea></p>
     <p><label for="id_learning_goals">{% trans "Learning goals" %}:</label> <textarea rows="10" cols="40" name="learning_goals" id="id_learning_goals">{{ course.learning_goals }}</textarea></p>
+    <p>
+        <label for="id_syllabus">{% trans "Syllabus" %}:</label>
+        {% if course.syllabus and course.syllabus.url %}
+            {% trans "Current" %}: <a href="{{ course.syllabus.url }}" title="{% trans "Syllabus" %}">{{ course.syllabus.url }}</a>.
+        {% endif %}
+        <input id="id_syllabus" type="file" name="syllabus" value="{{ course.syllabus.file }}" class="input-xlarge" />
+    </p>
     <input type="submit" value="{% trans "Save" %}" />
 </form>
 {% endblock %}

@@ -286,7 +286,8 @@ def teacheradmin_info(request, course_slug):
     success = False
 
     if request.method == 'POST':
-        form = CourseForm(data=request.POST, instance=course)
+        form = CourseForm(data=request.POST, instance=course,
+                          files=request.FILES)
         if form.is_valid():
             form.save()
             success = True
