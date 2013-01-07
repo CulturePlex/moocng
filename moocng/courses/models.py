@@ -20,6 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from adminsortable.models import Sortable
 from adminsortable.fields import SortableForeignKey
+from jsonfield import JSONField
 from tinymce.models import HTMLField
 
 from moocng.courses.fields import PercentField
@@ -236,7 +237,8 @@ class Question(models.Model):
                                help_text=_(u'If this belongs to a homework or '
                                            u'an exam, then the stundents '
                                            u"won't see this video until the "
-                                           u'deadline is reached.'))
+                                           u'deadline is reached.'),
+                               blank=False, null=False)
     last_frame = models.ImageField(
         verbose_name=_(u"Last frame of the nugget's video"),
         upload_to='questions', blank=True)
@@ -246,6 +248,8 @@ class Question(models.Model):
         help_text=_(u'Chooses if the nugget\'s video last frame is used, or a '
                     u'white canvas instead.'),
         default=True, blank=False, null=False)
+
+    extra = JSONField(verbose_name=_(u'Extra options'))
 
     class Meta:
         verbose_name = _(u'question')
@@ -297,6 +301,7 @@ class Option(models.Model):
     solution = models.CharField(verbose_name=_(u'Solution'), max_length=200)
     text = models.CharField(verbose_name=_(u'Label text'), max_length=500,
                             blank=True, null=True)
+    extra = JSONField(verbose_name=_(u'Extra options'))
 
     class Meta:
         verbose_name = _(u'option')
