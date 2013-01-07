@@ -249,7 +249,8 @@ class Question(models.Model):
                     u'white canvas instead.'),
         default=True, blank=False, null=False)
 
-    extra = JSONField(verbose_name=_(u'Extra options'))
+    extra = JSONField(verbose_name=_(u'Extra options'),
+                      blank=False, null=False)
 
     class Meta:
         verbose_name = _(u'question')
@@ -301,7 +302,8 @@ class Option(models.Model):
     solution = models.CharField(verbose_name=_(u'Solution'), max_length=200)
     text = models.CharField(verbose_name=_(u'Label text'), max_length=500,
                             blank=True, null=True)
-    extra = JSONField(verbose_name=_(u'Extra options'))
+    extra = JSONField(verbose_name=_(u'Extra options'),
+                      blank=False, null=False)
 
     class Meta:
         verbose_name = _(u'option')
