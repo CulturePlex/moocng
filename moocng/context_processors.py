@@ -67,7 +67,10 @@ def theme(request):
         context['show_methodology'] = settings.SHOW_METHODOLOGY
     except AttributeError:
         context['show_methodology'] = True
-
+    try:
+        context['show_transcript'] = settings.SHOW_TRANSCRIPT
+    except AttributeError:
+        context['show_transcript'] = True
     return context
 
 

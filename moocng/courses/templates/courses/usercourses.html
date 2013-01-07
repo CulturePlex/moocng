@@ -1,3 +1,7 @@
 {% for course in courses %}
+{% if course.unit_set.count %}
 <li><a href="{% url course_classroom course.slug %}">{{ course|truncatechars:30 }}</a></li>
+{% else %}
+<li><a href="{% url course_overview course.slug %}">{{ course|truncatechars:30 }}</a></li>
+{% endif %}
 {% endfor %}

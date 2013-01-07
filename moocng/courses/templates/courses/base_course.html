@@ -13,7 +13,7 @@
   </li>
 
   {% if show_material %}
-    {% if course.units %}
+    {% if course.unit_set.count %}
     <li {% block nav-course-classroom %}{% endblock %}>
       <a href="{% url course_classroom course.slug %}">{% trans "Classes" %}</a>
     </li>
@@ -21,7 +21,7 @@
   <li {% block nav-course-discussion %}{% endblock %}>
     <a href="{% askboturl course.slug %}">{% trans "Discussion" %}</a>
   </li>
-    {% if course.units %}
+    {% if course.unit_set.count %}
     <li {% block nav-course-progress %}{% endblock %}>
       <a href="{% url course_progress course.slug %}">{% trans "Progress" %}</a>
     </li>
