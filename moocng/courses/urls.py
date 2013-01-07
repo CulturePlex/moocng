@@ -46,4 +46,8 @@ urlpatterns = patterns(
     # Teacher's course administration
     url(r'^course/(?P<course_slug>[-\w]+)/teacheradmin/',
         include('moocng.teacheradmin.urls')),
+
+    # Teacher's course administration
+    url(r'^course/(?P<course_slug>[-\w]+)/discussion/',
+        include('moocng.discussion.urls')),
 )

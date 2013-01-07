@@ -1,0 +1,23 @@
+{% load comments i18n %}
+{% get_comment_list for comments_for as comment_list %}
+<dl id="comments">
+  {% for comment in comment_list %}
+    <p id="c{{ comment.id }}">
+        {{ comment.comment }} - <small><a href="{{ comment.user.get_absolute_url }}">{{ comment.name }}</a> | {{ comment.submit_date }}</small>
+    </p>
+  {% endfor %}
+</dl>
+
+{% get_comment_form for comments_for as form %}
+<form action="{% comment_form_target %}" method="post">{% csrf_token %}
+  {% if next %}<div><input type="hidden" name="next" value="{{ next }}" /></div>{% endif %}
+    {{ form.comment }}
+    <span style="display:none;">{{ form.honeypot }}</span>
+    {{ form.content_type }}
+    {{ form.object_pk }}
+    {{ form.timestamp }}
+    {{ form.security_hash }}
+  <p class="submit">
+    <input type="submit" name="post" class="btn" value="{% trans "Add Comment" %}" />
+  </p>
+</form>

@@ -1,0 +1,10 @@
+{% extends "courses/base_course.html" %}
+{% load i18n compress %}
+{% block extraheader %}
+<script type="text/javascript" src="{{ STATIC_URL }}tiny_mce/tiny_mce.js"></script>
+<script type="text/javascript" src="{% url tinymce-js "discussion" %}"></script>
+{% endblock %}
+
+{% block nav-course-discussion %}class="active"{% endblock %}
+
+{% block mainclass %}discussion{% endblock %}

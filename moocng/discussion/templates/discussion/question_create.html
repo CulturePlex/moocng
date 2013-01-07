@@ -1,0 +1,23 @@
+{% extends "discussion/base_question.html" %}
+{% load i18n %}
+
+{% block content %}
+    <h1>{{ course.name }}</h1>
+    <div class="row">
+      <div class="span12">
+        <div class="box">
+          <h2>{% trans "Add a question" %}</h2>
+          <p>{% trans "Add a question to discuss with other students and better understand it" %}</p>
+          <form method="POST" action="">
+          {% csrf_token %}
+            <fieldset>
+                {{ form }}
+            </fieldset>
+            <div class="box-footer">
+                <button type="submit" class="btn primary">{% trans "Add" %}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+{% endblock %}

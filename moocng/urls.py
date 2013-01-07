@@ -40,6 +40,8 @@ urlpatterns = patterns(
     url(r'^api/', include('moocng.api.urls')),
 
     url(r'^complaints/', include('moocng.complaints.urls')),
+
+    url(r'^comments/', include('django.contrib.comments.urls')),
 )
 
 if "moocng.accounts" in settings.INSTALLED_APPS:

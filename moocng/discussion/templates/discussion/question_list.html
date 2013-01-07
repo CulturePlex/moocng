@@ -1,0 +1,31 @@
+{% extends "discussion/base_question.html" %}
+{% load i18n compress %}
+
+{% block content %}
+    <h1>{{ course.name }}</h1>
+    <div class="row">
+      <div class="span8">
+          {% for q in questions %}
+          <div class="box">
+            <h2><a href="{{ q.get_absolute_url }}">{{ q.question }}</a></h2>
+            <p>{{ q.content|striptags|safe|truncatewords:"50" }}</p>
+            <small>
+              {{ q.score }} {% trans "votes" %}, {{ q.responses.count }} {% trans "answers" %} -
+              {% trans "posted by" %} <a href="{{ user.get_absolute_url }}">{{ q.user }}</a> |
+              {{ q.created }}
+            </small>
+         </div>
+         {% empty %}
+            <div class="box">
+              {% trans "No discussion yet" %}
+            </div>
+         {% endfor %}
+      </div>
+      <div class="span4">
+        <div class="box">
+          <h2>{% trans "Ask question" %}</h2>
+          <a href="{% url discussion_question_create course.slug %}" class="btn large primary">{% trans "Add a question" %}</a>
+        </div>
+      </div>
+    </div>
+{% endblock %}

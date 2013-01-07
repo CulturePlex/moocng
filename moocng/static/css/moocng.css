@@ -388,3 +388,28 @@ input[type="checkbox"] {
     height: auto;
     width: auto;
 }
+
+.centered-scores {
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.accepted-answer {
+    color: #5B9058;
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.box-comments {
+    margin-top: 1em;
+    margin-left: 3em;
+    padding: 1em 0 0 0;
+    border-top: 1px solid #dddddd;
+    display: none;
+}
+
+.box-comments textarea {
+    width: 80%;
+    height: 50px;
+    border: 1px dashed grey;
+}

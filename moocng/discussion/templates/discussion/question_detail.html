@@ -1,0 +1,87 @@
+{% extends "discussion/base_question.html" %}
+{% load i18n comments %}
+
+{% block content %}
+    <h1>{{ course.name }}</h1>
+    <div class="row">
+      <div class="span12">
+        <div class="box">
+            <h2>{{ question.question }}</h2>
+            <h3>{{ question.content|safe }}</h3>
+            <small>
+                [<a href="{% url discussion_question_vote course.slug question.id "up" %}" title="{% trans "This answer is useful" %}">▲</a> |
+                <a href="{% url discussion_question_vote course.slug question.id "down" %}" title="{% trans "This answer is not useful" %}">▼</a>]
+                {{ question.score }} {% trans "votes" %}, {{ question.responses.count }} {% trans "answers" %} -
+                {% get_comment_count for question as comment_count %}
+                {% if not comment_count %}
+                    <a href="javascript:{document.getElementById('box-comment-q{{ question.id }}').style.display='block';return false;}">{% trans "add comment" %}</a> |
+                {% endif %}
+                {% trans "posted by" %} <a href="{{ question.user.get_absolute_url }}">{{ question.user }}</a> |
+                {{ question.created }}
+            </small>
+            <div class="box-comments" id="box-comment-q{{ question.id }}" {% if comment_count %}style="display:block;"{% endif %}>
+                {% include "discussion/comments.html" with comments_for=question next=question.get_absolute_url %}
+            </div>
+        </div>
+      </div>
+    </div>
+    {% if responses %}
+    <h3>{{ responses.count }} {% trans "Answers" %}</h3>
+    {% for r in responses %}
+        <div class="row">
+            <div class="span2">
+                <div class="box">
+                    <div class="centered-scores">
+                        <a href="{% url discussion_response_vote course.slug r.id "up" %}" title="{% trans "This answer is useful" %}">▲</a>
+                    </div>
+                    <div class="centered-scores">
+                        {{ r.score }}
+                    </div>
+                    <div class="centered-scores">
+                        <a href="{% url discussion_response_vote course.slug r.id "down"  %}" title="{% trans "This answer is not useful" %}">▼</a>
+                    </div>
+                    <div class="centered-scores">
+                    {% if r.accepted %}
+                        <span class="accepted-answer">✓</span>
+                    {% elif can_mark_accepted %}
+                        <a href="{% url discussion_mark_accepted course.slug question.id r.id %}" title="{% trans "Set this answer as your accepted answer" %}">✓</a>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="span10">
+                <div id="response-{{ r.id }}" class="box">
+                    <h3>{{ r.content|safe }}</h3>
+                    <small style="float:right;">
+                        {% get_comment_count for r as comment_count %}
+                        {% if not comment_count %}
+                            <a href="javascript:{document.getElementById('box-comment-r{{ r.id }}').style.display='block';return false;}">{% trans "add comment" %}</a> |
+                        {% endif %}
+                        {% trans "response by" %} <a href="{{ r.user.get_absolute_url }}">{{ r.user }}</a> |
+                        {{ r.created }}
+                    </small><br/>
+                    <div class="box-comments" id="box-comment-r{{ r.id }}" {% if comment_count %}style="display:block;"{% endif %}>
+                        {% include "discussion/comments.html" with comments_for=r next=r.get_absolute_url %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    {% endif %}
+    <h3>{% trans "Your Answer" %}</h3>
+    <div class="row">
+      <div class="span12">
+        <div class="box">
+            <form method="POST" action="">
+                {% csrf_token %}
+                <fieldset>
+                    {{ add_response_form }}
+                </fieldset>
+                <div class="box-footer">
+                    <button type="submit" class="btn primary">{% trans "Submit" %}</button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+{% endblock %}
