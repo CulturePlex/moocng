@@ -58,7 +58,7 @@
         {% if course.syllabus and course.syllabus.url %}
             {% trans "Current" %}: <a href="{{ course.syllabus.url }}" title="{% trans "Syllabus" %}">{{ course.syllabus.url }}</a>.
         {% endif %}
-        <input id="id_syllabus" type="file" name="syllabus" value="{{ course.syllabus.file }}" class="input-xlarge" />
+        <input id="id_syllabus" type="file" name="syllabus" class="input-xlarge" />
     </p>
     <input type="submit" value="{% trans "Save" %}" />
 </form>
