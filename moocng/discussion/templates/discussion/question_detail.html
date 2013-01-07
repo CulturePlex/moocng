@@ -1,5 +1,5 @@
 {% extends "discussion/base_question.html" %}
-{% load i18n comments %}
+{% load i18n comments workflow %}
 
 {% block content %}
     <h1>{{ course.name }}</h1>
@@ -15,6 +15,9 @@
                 {% get_comment_count for question as comment_count %}
                 {% if not comment_count %}
                     <a href="javascript:{document.getElementById('box-comment-q{{ question.id }}').style.display='block';return false;}">{% trans "add comment" %}</a> |
+                {% endif %}
+                {% workflow.can_delete_question user question as can_delete %}{% if can_delete %}
+                    <a href="{% url discussion_question_delete course.slug question.id %}" title="{% trans "Delete this question" %}">{% trans "remove" %}</a> |
                 {% endif %}
                 {% trans "posted by" %} <a href="{{ question.user.get_absolute_url }}">{{ question.user }}</a> |
                 {{ question.created }}
@@ -56,6 +59,9 @@
                         {% get_comment_count for r as comment_count %}
                         {% if not comment_count %}
                             <a href="javascript:{document.getElementById('box-comment-r{{ r.id }}').style.display='block';return false;}">{% trans "add comment" %}</a> |
+                        {% endif %}
+                        {% workflow.can_delete_response user r as can_delete %}{% if can_delete %}
+                            <a href="{% url discussion_response_delete course.slug r.id %}" title="{% trans "Delete this answer" %}">{% trans "remove" %}</a> |
                         {% endif %}
                         {% trans "response by" %} <a href="{{ r.user.get_absolute_url }}">{{ r.user }}</a> |
                         {{ r.created }}

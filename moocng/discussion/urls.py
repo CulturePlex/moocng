@@ -1,9 +1,5 @@
 from django.conf.urls.defaults import patterns, url
 
-from voting.views import vote_on_object
-
-from moocng.discussion.models import Question
-
 
 urlpatterns = patterns("",
     url(r"^$",
@@ -29,9 +25,19 @@ urlpatterns = patterns("",
         name="discussion_question_vote"
     ),
 
+    url(r"^question/(?P<question_id>\d+)/delete/$",
+        "moocng.discussion.views.question_delete",
+        name="discussion_question_delete"
+    ),
+
     # Response voting
     url(r"^response/(?P<response_id>\d+)/vote/(?P<direction>up|down|clear)/$",
         "moocng.discussion.views.response_vote",
         name="discussion_response_vote"
+    ),
+
+    url(r"^response/(?P<response_id>\d+)/delete/$",
+        "moocng.discussion.views.response_delete",
+        name="discussion_response_delete"
     ),
 )

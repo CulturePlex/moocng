@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.http import HttpResponseForbidden
 from django.template import RequestContext
@@ -96,10 +97,10 @@ def question_detail(request, course_slug, question_id, **kwargs):
     question = get_object_or_404(questions, pk=question_id)
     responses = question.responses.order_by("-score", "created", "id")
 
-    if question.user == request.user:
-        is_me = True
-    else:
-        is_me = False
+    # if question.user == request.user:
+    #     is_me = True
+    # else:
+    #     is_me = False
 
     if request.method == "POST":
         add_response_form = AddResponseForm(request.POST)
@@ -111,10 +112,11 @@ def question_detail(request, course_slug, question_id, **kwargs):
             response.save()
             return HttpResponseRedirect(response.get_absolute_url())
     else:
-        if not is_me or request.user.is_staff:
-            add_response_form = AddResponseForm()
-        else:
-            add_response_form = None
+        add_response_form = AddResponseForm()
+        # if not is_me or request.user.is_staff:
+        #     add_response_form = AddResponseForm()
+        # else:
+        #     add_response_form = None
 
     is_enrolled = course.students.filter(id=request.user.id).exists()
     is_teacher = is_teacher_test(request.user, course)
@@ -148,6 +150,20 @@ def question_vote(request, course_slug, question_id, direction):
         Vote.objects.record_vote(question, request.user, 0)
     return HttpResponseRedirect(question.get_absolute_url())
 
+
+@login_required
+def question_delete(request, course_slug, question_id):
+    course = get_object_or_404(Course, slug=course_slug)
+    questions = Question.objects.filter(course=course)
+    question = get_object_or_404(questions, pk=question_id)
+    can_delete_question = workflow.can_delete_question(request.user, question)
+    if not can_delete_question:
+        msg = _("You are not allowed to delete this question.")
+        return HttpResponseForbidden(msg)
+    else:
+        question.delete()
+    return HttpResponseRedirect(reverse("discussion_question_list",
+                                        args=[course.slug]))
 
 @login_required
 def mark_accepted(request, course_slug, question_id, response_id, **kwargs):
@@ -186,3 +202,18 @@ def response_vote(request, course_slug, response_id, direction):
     elif direction == 'clear':
         Vote.objects.record_vote(response, request.user, 0)
     return HttpResponseRedirect(response.question.get_absolute_url())
+
+
+@login_required
+def response_delete(request, course_slug, response_id):
+    get_object_or_404(Course, slug=course_slug)
+    responses = Response.objects.all()
+    response = get_object_or_404(responses, pk=response_id)
+    question_url = response.question.get_absolute_url()
+    can_delete_response = workflow.can_delete_response(request.user, response)
+    if not can_delete_response:
+        msg = _("You are not allowed to delete this response.")
+        return HttpResponseForbidden(msg)
+    else:
+        response.delete()
+    return HttpResponseRedirect(question_url)
