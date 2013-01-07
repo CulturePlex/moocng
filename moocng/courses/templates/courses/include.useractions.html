@@ -17,7 +17,7 @@
       <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
-      <li><a href="{% url transcript %}">{% trans "My transcript" %}</a></li>
+      {% if show_transcript %}<li><a href="{% url transcript %}">{% trans "My transcript" %}</a></li>{% endif %}
       <li><a href="{{ profile_url }}">{% trans "Profile settings" %}</a></li>
       <li><a href="{{ changepw_url }}">{% trans "Change Password" %}</a></li>
       {% if user.is_staff %}

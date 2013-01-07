@@ -304,6 +304,7 @@ SHOW_TOS = False
 SHOW_LEGAL = False
 SHOW_FAQ = False
 SHOW_METHODOLOGY = False
+SHOW_TRANSCRIPT = False
 ALLOW_UPLOAD_QUESTION_IMAGE = True
 
 FFMPEG = '/usr/bin/ffmpeg'
