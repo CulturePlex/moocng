@@ -189,6 +189,7 @@ INSTALLED_APPS = (
     'voting',
     'userena',
     'guardian',
+    'drglearning',
     #'djangosaml2',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
@@ -325,6 +326,13 @@ AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
 LOGIN_URL = '/accounts/signin/'
 LOGOUT_URL = '/accounts/signout/'
+
+# DrGlearning careers
+# DRGLEARNING_CAREERS = {
+#     "digital-creativity-dh2121g": [
+#         {"id": 3, "title": "Career about Creativity"},
+#     ],
+# }
 
 # SAML settings
 # REGISTRY_URL = 'https://idp.openmooc.org/simplesaml/module.php/userregistration/newUser.php'
