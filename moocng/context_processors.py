@@ -55,6 +55,18 @@ def theme(request):
         context['show_tos'] = settings.SHOW_TOS
     except AttributeError:
         context['show_tos'] = True
+    try:
+        context['show_legal'] = settings.SHOW_LEGAL
+    except AttributeError:
+        context['show_legal'] = True
+    try:
+        context['show_faq'] = settings.SHOW_FAQ
+    except AttributeError:
+        context['show_faq'] = True
+    try:
+        context['show_methodology'] = settings.SHOW_METHODOLOGY
+    except AttributeError:
+        context['show_methodology'] = True
 
     return context
 

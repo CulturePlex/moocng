@@ -58,10 +58,11 @@
       {% endif %}
       <ul class="unstyled pull-right" id="meta-buttons">
         <li><a href="/" class="btn btn-link">{% trans "Home"%}</a></li>
-        |
+        {% if show_faw %}|
         <li><a href="/faq/" class="btn btn-link">FAQ</a></li>
-        |
+        {% endif %}{% if show_methodology %}|
         <li><a href="/methodology/" class="btn btn-link">{% trans "Methodology" %}</a></li>
+        {% endif %}
       </ul>
       <div class="clearfix"></div>
     </header>
@@ -79,8 +80,10 @@
     </div>
     <footer>
       <ul>
+        {% if show_legal %}
         <li><a href="/legal/">{% trans "Legal" %}</a></li>
-        <li><a href="/copyright/">&copy; {% now "Y" %} {{ site.name }}. {% trans "All rights reserved" %}</a></li>
+        {% endif %}
+        <li>&copy; {% now "Y" %} {{ site.name }}. {% trans "All rights reserved" %}</li>
         {% if show_tos %}
         <li><a href="/tos/">{% trans "Terms of Use" %}</a></li>
         {% endif %}

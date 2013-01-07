@@ -299,7 +299,10 @@ MOOCNG_THEME = {
 #    'moocng_css': u'',
     }
 
-#SHOW_TOS = True
+SHOW_TOS = False
+SHOW_LEGAL = False
+SHOW_FAQ = False
+SHOW_METHODOLOGY = False
 ALLOW_UPLOAD_QUESTION_IMAGE = True
 
 FFMPEG = '/usr/bin/ffmpeg'
