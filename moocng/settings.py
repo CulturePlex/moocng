@@ -186,10 +186,9 @@ INSTALLED_APPS = (
     'moocng.teacheradmin',
     'moocng.accounts',
     'moocng.discussion',
+    'voting',
     'userena',
     'guardian',
-    'voting',
-    'django_evolution',
     #'djangosaml2',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
