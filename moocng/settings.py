@@ -189,6 +189,7 @@ INSTALLED_APPS = (
     'voting',
     'userena',
     'guardian',
+    'easy_thumbnails',
     'drglearning',
     #'djangosaml2',
     # Uncomment the next line to enable admin documentation:
