@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
-from django.http import HttpResponseNotAllowed, HttpResponseForbidden
+from django.http import HttpResponseRedirect
+from django.http import HttpResponseForbidden
 from django.template import RequestContext
 from django.shortcuts import get_object_or_404, render_to_response
 from django.utils.importlib import import_module
@@ -10,6 +10,7 @@ from django.utils.translation import ugettext as _
 from voting.models import Vote
 
 from moocng.courses.models import Course
+from moocng.courses.utils import is_teacher as is_teacher_test
 from moocng.discussion.forms import AskQuestionForm, AddResponseForm
 from moocng.discussion.groups import group_and_bridge, group_context
 from moocng.discussion.models import Question, Response
@@ -32,11 +33,14 @@ def question_list(request, course_slug, **kwargs):
         questions = group.content_objects(questions)
     else:
         questions = questions.filter(group_content_type=None)
-
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+    is_teacher = is_teacher_test(request.user, course)
     ctx = group_context(group, bridge)
     ctx.update({
         "course": course,
         "show_material": True,
+        "is_enrolled": is_enrolled,
+        "is_teacher": is_teacher,
         "group": group,
         "questions": questions,
     })
@@ -61,10 +65,14 @@ def question_create(request, course_slug, **kwargs):
     else:
         form = AskQuestionForm()
 
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+    is_teacher = is_teacher_test(request.user, course)
     ctx = group_context(group, bridge)
     ctx.update({
         "course": course,
         "show_material": True,
+        "is_enrolled": is_enrolled,
+        "is_teacher": is_teacher,
         "group": group,
         "form": form,
     })
@@ -108,18 +116,21 @@ def question_detail(request, course_slug, question_id, **kwargs):
         else:
             add_response_form = None
 
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+    is_teacher = is_teacher_test(request.user, course)
     can_mark_accepted = workflow.can_mark_accepted(request.user, question)
     ctx = group_context(group, bridge)
     ctx.update({
         "course": course,
         "show_material": True,
+        "is_enrolled": is_enrolled,
+        "is_teacher": is_teacher,
         "group": group,
         "can_mark_accepted": can_mark_accepted,
         "question": question,
         "responses": responses,
         "add_response_form": add_response_form,
     })
-
     ctx = RequestContext(request, ctx)
     return render_to_response("discussion/question_detail.html", ctx)
 
