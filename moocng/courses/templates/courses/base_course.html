@@ -13,19 +13,19 @@
   </li>
 
   {% if show_material %}
-
-  <li {% block nav-course-classroom %}{% endblock %}>
-    <a href="{% url course_classroom course.slug %}">{% trans "Classes" %}</a>
-  </li>
-
+    {% if course.units %}
+    <li {% block nav-course-classroom %}{% endblock %}>
+      <a href="{% url course_classroom course.slug %}">{% trans "Classes" %}</a>
+    </li>
+    {% endif %}
   <li {% block nav-course-discussion %}{% endblock %}>
     <a href="{% askboturl course.slug %}">{% trans "Discussion" %}</a>
   </li>
-
-  <li {% block nav-course-progress %}{% endblock %}>
-    <a href="{% url course_progress course.slug %}">{% trans "Progress" %}</a>
-  </li>
-
+    {% if course.units %}
+    <li {% block nav-course-progress %}{% endblock %}>
+      <a href="{% url course_progress course.slug %}">{% trans "Progress" %}</a>
+    </li>
+    {% endif %}
   {% endif %}
 
   {% if is_teacher or user.is_staff %}
