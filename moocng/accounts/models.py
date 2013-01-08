@@ -10,6 +10,8 @@ from django.utils.translation import gettext as _
 from guardian.shortcuts import assign
 from userena.models import UserenaLanguageBaseProfile
 
+from moocng.teacheradmin.models import Invitation
+
 
 class UserProfile(UserenaLanguageBaseProfile):
     GENDER_CHOICES = (
@@ -57,10 +59,21 @@ def create_profile_account(*args, **kwargs):
 
 
 @receiver(post_save, sender=User, dispatch_uid='user.created')
-def add_change_profile_perm(sender, instance, created, raw, using, **kwargs):
+def add_change_profile_perm(sender, user, created, raw, using, **kwargs):
     """ Adds 'change_profile' permission to created user objects """
     if created:
         try:
-            assign('change_profile', instance, instance.get_profile())
+            assign('change_profile', user, user.get_profile())
         except:
             pass  # Anonymous user
+
+
+@receiver(post_save, sender=User, dispatch_uid='user.teacher')
+def add_user_to_teachers(sender, user, created, raw, using, **kwargs):
+    """Configures a user after creation and returns the updated user.
+    """
+    if created and user and user.email:
+        user_pendings = Invitation.objects.filter(email=user.email)
+        for user_pending in user_pendings:
+            user_pending.course.teachers.add(user)
+            user_pending.delete()
