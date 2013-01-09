@@ -1,6 +1,6 @@
 {% extends "courses/base_course.html" %}
 
-{% load gravatar i18n %}
+{% load avatar i18n %}
 
 {% block nav-course-overview %}class="active"{% endblock %}
 
@@ -82,14 +82,14 @@
             <h2>{% trans "Teachers" %}</h2>
             <ul class="unstyled">
                 <li class="teacher">
-                    {% gravatar_img_for_user course.owner 50 %}
+                    {% avatar_for_user course.owner 50 %}
                     <strong>{% firstof course.owner.get_full_name course.owner.username %}</strong>
                 </li>
 
             {% for teacher in course.teachers.all %}
                 {% if teacher.username != course.owner.username %}
                     <li class="teacher">
-                        {% gravatar_img_for_user teacher 50 %}
+                        {% avatar_for_user teacher 50 %}
                         <strong>{% firstof teacher.get_full_name teacher.username %}</strong>
                     </li>
                 {% endif %}

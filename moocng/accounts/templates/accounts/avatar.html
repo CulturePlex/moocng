@@ -1,0 +1,6 @@
+{% load gravatar thumbnail %}
+{% if profile %}
+    <img src="{% thumbnail profile.mugshot size %}" title="Avatar for {{ user.username }}" alt="Avatar for {{ user.username }}" height="{{ height }}" width="{{ width }}">
+{% else %}
+    {% gravatar_img_for_user user size %}
+{% endif %}

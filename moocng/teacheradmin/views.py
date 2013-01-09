@@ -28,6 +28,7 @@ from django.utils.translation import ugettext as _
 
 from gravatar.templatetags.gravatar import gravatar_img_for_email
 
+from moocng.accounts.templatetags.avatar import avatar_img_for_user
 from moocng.courses.models import Course, KnowledgeQuantum, Option, Announcement
 from moocng.courses.views import unit_badge_classes
 from moocng.courses.forms import AnnouncementForm
@@ -158,13 +159,13 @@ def teacheradmin_teachers(request, course_slug):
     teachers = [{
                 'id': t.id,
                 'username': t.get_full_name() or t.username,
-                'gravatar': gravatar_img_for_email(t.email, 20),
+                'gravatar': avatar_img_for_user(t, 20),
                 } for t in teachers]
     invitations = Invitation.objects.filter(course=course)
     invitations = [{
                    'id': -1,
                    'username': inv.email,
-                   'gravatar': '',
+                   'gravatar': gravatar_img_for_email(inv.email, 20),
                    } for inv in invitations]
     teachers.extend(invitations)
 
