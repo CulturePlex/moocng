@@ -32,7 +32,8 @@ def workflow_func(parser, token):
         msg = "%r tag requires arguments" % token.contents.split()[0]
         raise template.TemplateSyntaxError(msg)
     args = token.split_contents()[1:]
-    if " as " in args and args.index(" as ") == len(args) - 2:
+    # TODO: re.search(r'(.*?) as (\w+)', token.contents.split(None, 1)[1]).groups()
+    if "as" in args and args.index("as") == len(args) - 2:
         var_name = args[-1]
         args = args[:-2]
     else:
