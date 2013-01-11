@@ -16,12 +16,17 @@ def careers(request, course_slug, **kwargs):
         raise Http404
     is_enrolled = course.students.filter(id=request.user.id).exists()
     is_teacher = is_teacher_test(request.user, course)
+    if request.is_secure():
+        host = "https://%s" % request.get_host()
+    else:
+        host = "http://%s" % request.get_host()
     ctx = {
         "course": course,
         "show_material": True,
         "is_enrolled": is_enrolled,
         "is_teacher": is_teacher,
-        "careers": careers
+        "careers": careers,
+        "host": host,
     }
     ctx = RequestContext(request, ctx)
     return render_to_response("drglearning/careers.html", ctx)

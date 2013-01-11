@@ -1,6 +1,11 @@
 {% extends "courses/base_course.html" %}
 {% load i18n compress %}
 
+{% block extraheader %}
+<script type="text/javascript" src="{{ STATIC_URL }}drglearning/postmessage.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}drglearning/drglearning.js"></script>
+{% endblock %}
+
 {% block nav-course-drglearning %}class="active"{% endblock %}
 
 {% block mainclass %}drglearning{% endblock %}
@@ -9,34 +14,20 @@
     <h1>{{ course.name }}</h1>
     <div class="row">
       <div class="span8">
-          <div class="box">
-            <h2>{{ careers.0.title }}</h2>
-            <iframe src="http://drglearning.com/gecko/?embebed=true&careerToEmbed={{ careers.0.id }}" style="width:590px;height:400px" frameborder="0"></iframe>
+          <div class="box" id="iframe-container">
+            <h2 id="career-title">{% trans "Loading..." %}</h2>
+            <input id="drglearning-host" type="hidden" value="http://beta.drglearning.com"/>
+            <input id="career-url" type="hidden" value="http://beta.drglearning.com/gecko/?embed=true&careerToEmbed=" />
+            <iframe id="career-iframe" style="width:590px;height:400px" frameborder="0"></iframe>
          </div>
       </div>
       <div class="span4">
         <div class="box">
-          <h2>{% trans "More" %}</h2>
+          <h2>{% trans "Games" %}</h2>
           {% for career in careers %}
-            <a href="#{{ career.id }}" class="btn large primary">{{ career.title }}</a>
+            <a href="javascript:void();" data-career-id="{{ career.id }}" class="btn large primary career-id">{{ career.title }}</a>
           {% endfor %}
         </div>
       </div>
     </div>
 {% endblock %}
-<script type="text/javascript">
-  jQuery.ajax({
-  url: GlobalSettings.getServerURL() + "/api/v1/player/?format=json" ,
-  dataType : 'json',
-  data: {
-     "callback": "a",
-  "code": uniqueid
-  },
-  success: function (response) {
-  console.log(response);
-     Dao.userStore.save({key:'token',value:response.token});
-  //localStorage.token = response.token;
-  console.log("User successfully registered");
-  }
-  });
-</script>
