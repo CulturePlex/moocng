@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load i18n askboturl drglearning %}
+{% load i18n askboturl drglearning_tags %}
 
 {% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
 
@@ -26,7 +26,7 @@
       <a href="{% url course_progress course.slug %}">{% trans "Progress" %}</a>
     </li>
     {% endif %}
-    {% if course.slug|drglearning_careers %}
+    {% if course|drglearning_careers %}
     <li {% block nav-course-drglearning %}{% endblock %}>
       <a href="{% url drglearning_careers course.slug %}">{% trans "Games" %}</a>
     </li>

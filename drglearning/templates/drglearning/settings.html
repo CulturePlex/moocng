@@ -1,0 +1,32 @@
+{% extends "courses/base_course.html" %}
+{% load i18n compress %}
+
+{% block nav-course-drglearning %}class="active"{% endblock %}
+
+{% block mainclass %}drglearning{% endblock %}
+
+{% block content %}
+    <h1>{{ course.name }}</h1>
+    <div class="row">
+      <div class="span8">
+          <div class="box" id="iframe-container">
+            <h2 id="career-title">{% trans "Have you ever played Dr. Glearning?" %}</h2>
+            <p>{% blocktrans %}
+                If you have already played Dr. Glearning, in your Android, iPad or browser,
+                you can use the same account. Just go to the home page, then 'Settings' → 'Export User',
+                and copy and paste that code in the next input box.
+            {% endblocktrans %}</p>
+            <form action="." method="post">
+            {% csrf_token %}
+            {{ import_player_form }}
+            <p><input type="submit" value="{% trans "Yep, import my existing account" %}" class="btn"></p>
+            </form>
+            <hr>
+            <p>{% blocktrans %}
+                But, if you have never played Dr. Glearning before, just click on the next button.
+            {% endblocktrans %}</p>
+            <a href="?nope" class="btn">{% trans "Nope, I've never played before" %}</a>
+         </div>
+      </div>
+    </div>
+{% endblock %}

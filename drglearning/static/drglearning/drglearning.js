@@ -4,6 +4,7 @@
         urlToEmbed = $("#career-url").val(),
         iframe = $("#career-iframe"),
         title = $("#career-title");
+        userCode = $("#user-code").val();
 
     $("a.career-id").each(function (e) {
       var $this = $(this);
@@ -21,8 +22,8 @@
         return;
       }
       if (message.data == "ready") {
-        // XD.postMessage(user_code, src, frames[0]);
-        console.log(message.data);
+        args = {"action": "importUser", "params": {"playerCode": userCode}};
+        XD.postMessage(JSON.stringify(args), src, frames[0]);
       }
     }, drglearningHost);
 

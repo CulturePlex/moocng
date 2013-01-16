@@ -1,9 +1,13 @@
 from django.conf.urls.defaults import patterns, url
 
 
-urlpatterns = patterns("",
+urlpatterns = patterns("drglearning.views",
     url(r"^$",
-        "drglearning.views.careers",
+        "careers",
         name="drglearning_careers"
+    ),
+    url(r"^settings/$",
+        "settings",
+        name="drglearning_settings"
     ),
 )
