@@ -16,8 +16,9 @@
       <div class="span8">
           <div class="box" id="iframe-container">
             <h2 id="career-title">{% trans "Loading..." %}</h2>
-            <input id="drglearning-host" type="hidden" value="http://beta.drglearning.com"/>
-            <input id="career-url" type="hidden" value="http://beta.drglearning.com/gecko/?embed=true&careerToEmbed=" />
+            <input id="drglearning-host" type="hidden" value="{{ drglearning_host }}"/>
+            <input id="career-url" type="hidden" value="{{ drglearning_embed_url }}" />
+            <input id="player-code" type="hidden" value="{{ player.code }}" />
             <iframe id="career-iframe" style="width:590px;height:400px" frameborder="0"></iframe>
          </div>
       </div>
@@ -25,7 +26,7 @@
         <div class="box">
           <h2>{% trans "Games" %}</h2>
           {% for career in careers %}
-            <a href="javascript:void();" data-career-id="{{ career.id }}" class="btn large primary career-id">{{ career.title }}</a>
+            <a href="javascript:void();" data-career-id="{{ career.career_id }}" class="btn large primary career-id">{{ career.name }}</a>
           {% endfor %}
         </div>
       </div>

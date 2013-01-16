@@ -1,6 +1,9 @@
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+
+from drglearning.models import Player
 
 
-class ImportPlayerForm(forms.Form):
-    code = forms.CharField(label=_(u"Code"), required=True)
+class ImportPlayerForm(forms.ModelForm):
+    class Meta:
+        model = Player
+        fields = ("code", )

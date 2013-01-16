@@ -41,8 +41,11 @@ class Player(models.Model):
     def save(self, *args, **kwargs):
         super(Player, self).save(*args, **kwargs)
         defaults = self.user.players.filter(default=True)
-        if defaults.count() > 1 and self.user:
-            self.user.players.exclude(id=defaults[0].id).update(default=False)
+        if self.default:
+            defaults.update(default=False)
+        elif not defaults.count():
+            player = self.user.players.filter()[0]
+            self.user.players.filter(id=player.id).update(default=True)
 
     def get_name(self):
         if self.display_name and self.email:

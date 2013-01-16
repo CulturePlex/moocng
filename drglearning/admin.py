@@ -11,7 +11,7 @@ class CareerAdmin(admin.ModelAdmin):
 
 class PlayerAdmin(admin.ModelAdmin):
 
-    list_display = ('display_name', 'email', 'code')
+    list_display = ('user', 'display_name', 'email', 'code')
     list_filter = ('user', )
 
 
