@@ -16,8 +16,8 @@
       <div class="span8">
           <div class="box" id="iframe-container">
             <h2 id="career-title">{% trans "Loading..." %}</h2>
-            <input id="drglearning-host" type="hidden" value="{{ drglearning_host }}"/>
-            <input id="career-url" type="hidden" value="{{ drglearning_embed_url }}" />
+            <input id="drglearning-host" type="hidden" value="{{ drglearning_host|safe }}"/>
+            <input id="career-url" type="hidden" value="{{ drglearning_embed_url|safe }}" />
             <input id="player-code" type="hidden" value="{{ player.code }}" />
             <iframe id="career-iframe" style="width:590px;height:400px" frameborder="0"></iframe>
          </div>

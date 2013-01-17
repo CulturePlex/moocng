@@ -12,9 +12,9 @@
           <div class="box" id="iframe-container">
             <h2 id="career-title">{% trans "Have you ever played Dr. Glearning?" %}</h2>
             <p>{% blocktrans %}
-                If you have already played Dr. Glearning, in your Android, iPad or browser,
-                you can use the same account. Just go to the home page, then 'Settings' → 'Export User',
-                and copy and paste that code in the next input box.
+                If you have already played Dr. Glearning, in your Android, iPhone, iPad or browser,
+                you can use the same account. Just go to home page, then 'Settings' → 'Export User',
+                and copy and paste that code in the next input box:
             {% endblocktrans %}</p>
             <form action="." method="post">
             {% csrf_token %}
@@ -23,7 +23,7 @@
             </form>
             <hr>
             <p>{% blocktrans %}
-                But, if you have never played Dr. Glearning before, just click on the next button.
+                But, if you have never played Dr. Glearning before, just click on the next button:
             {% endblocktrans %}</p>
             <a href="?nope" class="btn">{% trans "Nope, I've never played before" %}</a>
          </div>
