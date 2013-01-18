@@ -65,21 +65,21 @@ def course_overview(request, course_slug):
         is_teacher = False
 
     if request.method == 'POST':
-        is_member = (course.institutions and
-                     course.institutions.is_member(request.user))
-        if not is_member:
-            institutions = [i.name for i in course.institutions.all()]
-            error(request,
-                  _(u'Unfortunately, this course is only available for '
-                    u'%(institutions)s. Change your e-mail or contact to a '
-                    u'teacher.')
-                    % {'institutions': u", ".join(institutions)})
-        elif not is_enrolled:
-            course.students.add(request.user)
-            course.save()
-            success(request,
-                    _(u'Congratulations, you have successfully enroll in the course %(course)s')
-                    % {'course': unicode(course)})
+        if not is_enrolled:
+            is_member = course.institutions.is_member(request.user)
+            if not is_member:
+                institutions = [i.name for i in course.institutions.all()]
+                error(request,
+                      _(u'Unfortunately, this course is only available for '
+                        u'%(institutions)s. Change your e-mail or contact to a '
+                        u'teacher.')
+                        % {'institutions': u", ".join(institutions)})
+            else:
+                course.students.add(request.user)
+                course.save()
+                success(request,
+                        _(u'Congratulations, you have successfully enroll in the course %(course)s')
+                        % {'course': unicode(course)})
         else:
             course.students.remove(request.user)
             course.save()
