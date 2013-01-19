@@ -10,7 +10,8 @@
       var $this = $(this);
       $this.on("click", function (elto) {
         var careerId = $this.data("career-id"),
-            src = urlToEmbed + careerId +"&import="+ document.location.origin +"#"+ encodeURIComponent(document.location.href);
+            origin = window.location.protocol + "//" + window.location.host,
+            src = urlToEmbed + careerId +"&import="+ origin +"#"+ encodeURIComponent(document.location.href);
         title.text($this.text());
         iframe.attr("src", src);
 
