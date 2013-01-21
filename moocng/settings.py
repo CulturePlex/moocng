@@ -147,6 +147,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'maintenancemode.middleware.MaintenanceModeMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -282,7 +283,7 @@ FIXTURE_DIRS = (
 TINYMCE_DEFAULT_CONFIG = {
     'theme': 'advanced',
     'theme_advanced_toolbar_location': 'top',
-    'theme_advanced_buttons1': 'bold,italic,underline,strikethrough,separator,undo,redo,separator,cleanup,separator,bullist,numlist',
+    'theme_advanced_buttons1': 'bold,italic,underline,strikethrough,separator,undo,redo,separator,cleanup,separator,bullist,numlist,separator,link',
     'theme_advanced_buttons2' : '',
     'theme_advanced_buttons3' : '',
     }

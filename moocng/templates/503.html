@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block title %}{% trans 'Server error (500)' %}{% endblock %}
+
+{% block useractions %}{% include "courses/include.useractions.html" %}{% endblock %}
+
+{% block content %}
+<div class="media-box">
+  <a href="#">
+    <img src="{{ theme.top_banner }}" alt="" />
+  </a>
+</div>
+
+<div class="row">
+  <section class="span8">
+
+    <h1>{% trans 'Service Unavailable <em>(503)</em>' %}</h1>
+
+    <p>{% trans "This site is down for maintenance. There's been an error and we are trying to solve it. Thanks for your patience." %}</p>
+
+  </section>
+  <div class="span4">
+    <div class="media-box">
+      <img src="{{ theme.right_banner1 }}" alt="" />
+    </div>
+    <div class="media-box">
+      <img src="{{ theme.right_banner2 }}" alt="" />
+    </div>
+  </div>
+</div>
+{% endblock %}
