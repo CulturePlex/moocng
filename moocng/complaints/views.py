@@ -39,7 +39,7 @@ def complaints(request):
             else:
                 name = request.user.username
             message = _("In relation to my course:")
-            for course in request.user.message_as_student.all():
+            for course in request.user.courses_as_student.all():
                 message = "%s\n- %s" % (message, course.name)
             initial = {
                 "username": name,
