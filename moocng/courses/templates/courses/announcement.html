@@ -7,6 +7,6 @@
 {% block content %}
 <h1>{{ announcement.title }}</h1>
 <em>{% trans "Published on:" %} {{ announcement.datetime|date:"d / F / Y - H:i" }}</em>
-<div class="content">{{ announcement.content|safe }}</div>
+<div class="box">{{ announcement.content|safe }}</div>
 <a class="btn btn-small mb20" href="{% url course_overview course.slug %}">{% trans "Go back to Course Overview" %}</a>
 {% endblock %}
