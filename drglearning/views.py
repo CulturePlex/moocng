@@ -34,7 +34,8 @@ def drglearning_careers(request, course_slug, **kwargs):
         return HttpResponseRedirect(reversed_url)
     else:
         #TODO: Manage multiple players
-        player = request.user.players.filter(default=True)[0]
+        default_player = request.user.players.filter(default=True)[0]
+    import_player_form = ImportPlayerForm()
     is_enrolled = course.students.filter(id=request.user.id).exists()
     is_teacher = is_teacher_test(request.user, course)
     ctx = {
@@ -43,7 +44,9 @@ def drglearning_careers(request, course_slug, **kwargs):
         "is_enrolled": is_enrolled,
         "is_teacher": is_teacher,
         "careers": careers,
-        "player": player,
+        "players": request.user.players.all(),
+        "default_player": default_player,
+        "import_player_form": import_player_form,
         "drglearning_host": DRGLEARNING_HOST,
         "drglearning_embed_url": DRGLEARNING_EMBED_URL,
     }
@@ -98,3 +101,14 @@ def drglearning_settings(request, course_slug):
     }
     ctx = RequestContext(request, ctx)
     return render_to_response("drglearning/settings.html", ctx)
+
+
+@login_required
+def drglearning_player_remove(request, course_slug, player_id):
+    get_object_or_404(Course, slug=course_slug)
+    player = get_object_or_404(Player, pk=player_id)
+    if request.POST:
+        player.delete()
+    reversed_url = reverse("drglearning_careers",
+                           args=[course_slug])
+    return HttpResponseRedirect(reversed_url)

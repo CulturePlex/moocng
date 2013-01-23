@@ -18,7 +18,7 @@
             <h2 id="career-title">{% trans "Loading..." %}</h2>
             <input id="drglearning-host" type="hidden" value="{{ drglearning_host|safe }}"/>
             <input id="career-url" type="hidden" value="{{ drglearning_embed_url|safe }}" />
-            <input id="player-code" type="hidden" value="{{ player.code }}" />
+            <input id="player-code" type="hidden" value="{{ default_player.code }}" />
             <iframe id="career-iframe" style="width:590px;height:400px" frameborder="0"></iframe>
          </div>
       </div>
@@ -28,6 +28,28 @@
           {% for career in careers %}
             <a href="javascript:void();" data-career-id="{{ career.career_id }}" class="btn large primary career-id">{{ career.name }}</a>
           {% endfor %}
+        </div>
+        <div class="box">
+          <h2>{% trans "Account" %}</h2>
+          {% trans "Logged in Dr. Glearning as" %}:
+          <ul>
+            {% for player in players %}
+              <li>
+                <form action="{% url drglearning_player_remove course.slug player.id %}" method="post" name="removePlayer{{ player.id }}">
+                  {{ player.display_name }} ({{ player.email }})
+                  {% csrf_token %}
+                  {# <input type="image" title="{% trans "Remove" %}" value="" class="icon-large icon-remove btn btn-link"><i class="icon-large icon-remove"></i></input> #}
+                  <a href="javascript:document.removePlayer{{ player.id }}.submit();" alt="{% trans "Unset this account" %}" title="{% trans "Unset this account" %}" class="icon-large icon-remove"></a>
+                  <a href="javascript:alert('{% trans "Copy this code" %}: {{ player.code }}');" alt="{% trans "Code" %}" title="{% trans "Use this code to import the same account into your phone" %}" class="icon-large icon-barcode"></a>
+                  {% if default_player = player %}
+                    <i title="{% trans "Default" %}" class="icon-large icon-ok-sign"></i>
+                  {% else %}
+                    {# <a href="javascript:void();" alt="{% trans "Select as default" %}" title="{% trans "Select as default" %}" class="icon-large icon-ok-sign"></a> #}
+                  {% endif %}
+                </form>
+              </li>
+            {% endfor %}
+          </ul>
         </div>
       </div>
     </div>

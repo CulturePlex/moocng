@@ -10,4 +10,8 @@ urlpatterns = patterns("drglearning.views",
         "drglearning_settings",
         name="drglearning_settings"
     ),
+    url(r"^player/(?P<player_id>\w+)/remove/$",
+        "drglearning_player_remove",
+        name="drglearning_player_remove"
+    ),
 )
