@@ -469,10 +469,11 @@ class UserResource(ModelResource):
         allowed_methods = ['get']
         authentication = TeacherAuthentication()
         authorization = DjangoAuthorization()
-        fields = ['id', 'first_name', 'last_name']
+        fields = ['id', 'first_name', 'last_name', 'email']
         filtering = {
             'first_name': ['istartswith'],
-            'last_name': ['istartswith']
+            'last_name': ['istartswith'],
+            'email': ['icontains'],
         }
 
     def apply_filters(self, request, applicable_filters):

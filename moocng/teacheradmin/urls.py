@@ -36,6 +36,12 @@ urlpatterns = patterns(
     url(r'^teachers/transfer$', 'teacheradmin_teachers_transfer',
         name='teacheradmin_teachers_transfer'),
 
+    url(r'^students/$', 'teacheradmin_students', name='teacheradmin_students'),
+    url(r'^students/(?P<student_id>[^/]+)/$', 'teacheradmin_students_delete',
+        name='teacheradmin_students_delete'),
+    url(r'^students/enrol$', 'teacheradmin_students_enrol',
+        name='teacheradmin_students_enrol'),
+
     url(r'^info/$', 'teacheradmin_info', name='teacheradmin_info'),
 
     url(r'^announcements/$', 'teacheradmin_announcements',

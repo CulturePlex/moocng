@@ -381,3 +381,77 @@ def teacheradmin_emails(request, course_slug):
         'course': course,
         'is_enrolled': is_enrolled,
     }, context_instance=RequestContext(request))
+
+
+@is_teacher_or_staff
+def teacheradmin_students(request, course_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+    is_enrolled = course.students.filter(id=request.user.id).exists()
+
+    students = course.students.all().order_by("first_name").order_by("username")
+    students = [{
+                'id': s.id,
+                'username': s.get_full_name() or s.username,
+                'email': s.email,
+                'is_member': course.institutions.is_member(s),
+                'gravatar': avatar_img_for_user(s, 20),
+                } for s in students]
+
+    return render_to_response('teacheradmin/students.html', {
+        'course': course,
+        'is_enrolled': is_enrolled,
+        'students': students,
+        'request': request,
+    }, context_instance=RequestContext(request))
+
+
+@is_teacher_or_staff
+def teacheradmin_students_delete(request, course_slug, student_id):
+    course = get_object_or_404(Course, slug=course_slug)
+    response = HttpResponse()
+
+    try:
+        user = User.objects.get(id=student_id)
+        course.students.remove(user)
+        # send_removed_notification(request, user.email, course)
+    except (ValueError, User.DoesNotExist):
+        response = HttpResponse(status=404)
+
+    return response
+
+
+@is_teacher_or_staff
+def teacheradmin_students_enrol(request, course_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+    student_id = request.POST['data']
+    user = None
+    response = None
+    try:
+        user = User.objects.get(id=student_id)
+    except (ValueError, User.DoesNotExist):
+        response = HttpResponse(status=404)
+
+    if course.students.filter(id=user.id).exists():
+        user = None
+        response = HttpResponse(status=405)
+
+    if user is not None:
+        course.students.add(user)
+        name = user.get_full_name()
+        if not name:
+            name = user.username
+        data = {
+            'id': user.id,
+            'name': name,
+            'email': user.email,
+            'is_member': course.institutions.is_member(user),
+            'institutions': course.institutions.exists(),
+            'gravatar': avatar_img_for_user(user, 20),
+        }
+        response = HttpResponse(simplejson.dumps(data),
+                                mimetype='application/json')
+    elif response is None:
+        #TODO: Send an invitation?
+        response = HttpResponse(status=409)
+
+    return response
