@@ -53,7 +53,7 @@
             <td>{{ student.username }}</td>
             <td>{{ student.email }}</td>
             <td class="membership">
-            {% if student.id = request.user.id %}
+            {% if student.id = course.owner.id %}
                 <span class='label label-inverse'>{% trans "Owner" %}</span>
             {% elif student.is_teacher %}
                 <span class='label label-success'>{% trans "Teacher" %}</span>
