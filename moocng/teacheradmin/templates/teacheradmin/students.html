@@ -68,7 +68,7 @@
             {% endif %}
             </td>
             <td class="align-right">
-                <i class="icon-remove pointer"></i>
+                <i class="icon-remove pointer" title="{% trans "Un-enrol" %}" alt="{% trans "Un-enrol" %}"></i>
             </td>
         </tr>
         {% endfor %}
@@ -79,7 +79,7 @@
     <fieldset>
         <div class="input-append">
             <input id="invite-student" class="input-xlarge" type="text" autocomplete="off" placeholder="{% trans "Name or email" %}" />
-            <input type="submit" class="btn" value="{% trans "Add" %}" />
+            <input type="submit" class="btn" value="{% trans "Enrol" %}" />
         </div>
     </fieldset>
 </form>
