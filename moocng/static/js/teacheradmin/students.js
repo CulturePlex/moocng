@@ -133,12 +133,18 @@ jQuery(document).ready(function () {
                             "<td>"+ data.gravatar +"</td><td>" + data.name + "</td>" +
                             "<td>"+ data.email +"</td>"+
                             "<td class='membership'>";
-                    if (data.institutions) {
+                    if (data.is_owner) {
+                        html += "<span class='label label-inverse'>" +
+                            MOOC.owner + "</span>";
+                    } else if (data.is_teacher) {
+                        html += "<span class='label label-success'>" +
+                            MOOC.teacher + "</span>";
+                    } else if (data.institutions) {
                         if (data.is_member) {
                             html += "<span class='label label-info'>" +
                                 MOOC.is_member + "</span>";
                         } else {
-                            html += "<span class='label label-info'>" +
+                            html += "<span class='label label-warning'>" +
                                 MOOC.is_not_member + "</span>";
                         }
                     }

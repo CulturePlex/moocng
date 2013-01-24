@@ -394,6 +394,7 @@ def teacheradmin_students(request, course_slug):
                 'username': s.get_full_name() or s.username,
                 'email': s.email,
                 'is_member': course.institutions.is_member(s),
+                'is_teacher': course.teachers.filter(id=s.id).exists(),
                 'gravatar': avatar_img_for_user(s, 20),
                 } for s in students]
 
@@ -445,6 +446,8 @@ def teacheradmin_students_enrol(request, course_slug):
             'name': name,
             'email': user.email,
             'is_member': course.institutions.is_member(user),
+            'is_teacher': course.teachers.filter(id=user.id).exists(),
+            'is_owner': course.owner == user,
             'institutions': course.institutions.exists(),
             'gravatar': avatar_img_for_user(user, 20),
         }

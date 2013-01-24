@@ -8,6 +8,8 @@
 <script type="text/javascript">
     var MOOC = {
         basePath: "{{ request.path }}",
+        owner: "{% trans "Owner" %}",
+        teacher: "{% trans "Teacher" %}",
         is_member: "{% trans "Is Member" %}",
         is_not_member: "{% trans "Not a Member" %}",
         alertTime: 3500
@@ -51,11 +53,17 @@
             <td>{{ student.username }}</td>
             <td>{{ student.email }}</td>
             <td class="membership">
-            {% if course.institutions.exist %}
-                {% if student.is_member %}
-                    <span class='label label-info'>{% trans "Member" %}</span>
-                {% else %}
-                    <span class='label label-warning'>{% trans "Not a Member" %}</span>
+            {% if student.id = request.user.id %}
+                <span class='label label-inverse'>{% trans "Owner" %}</span>
+            {% elif student.is_teacher %}
+                <span class='label label-success'>{% trans "Teacher" %}</span>
+            {% else %}
+                {% if course.institutions.exists %}
+                    {% if student.is_member %}
+                        <span class='label label-info'>{% trans "Member" %}</span>
+                    {% else %}
+                        <span class='label label-warning'>{% trans "Not a Member" %}</span>
+                    {% endif %}
                 {% endif %}
             {% endif %}
             </td>
