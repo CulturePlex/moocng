@@ -11,7 +11,7 @@
             <p>{{ q.content|striptags|safe|truncatewords:"50" }}</p>
             <small>
               {{ q.score }} {% trans "votes" %}, {{ q.responses.count }} {% trans "answers" %} -
-              {% trans "posted by" %} <a href="{{ user.get_absolute_url }}">{{ q.user }}</a> |
+              {% trans "posted by" %} <a href="{{ q.user.get_absolute_url }}">{{ q.user }}</a> |
               {{ q.created }}
             </small>
          </div>

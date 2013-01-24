@@ -328,6 +328,9 @@ AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
 LOGIN_URL = '/accounts/signin/'
 LOGOUT_URL = '/accounts/signout/'
+ABSOLUTE_URL_OVERRIDES = {
+    'auth.user': lambda u: LOGIN_REDIRECT_URL % {"username": u.username},
+}
 
 # DrGlearning careers
 # DRGLEARNING_CAREERS = {
