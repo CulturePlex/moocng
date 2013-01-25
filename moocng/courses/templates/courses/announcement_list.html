@@ -1,0 +1,16 @@
+{% extends "courses/base_course.html" %}
+
+{% load i18n %}
+
+{% block mainclass %}announcement{% endblock %}
+
+{% block content %}
+{% for announcement in announcements %}
+    <div class="content">
+        <h1>{{ announcement.title }}</h1>
+        <em>{% trans "Published on:" %} {{ announcement.datetime|date:"d / F / Y - H:i" }}</em>
+        <div class="box">{{ announcement.content|safe }}</div>
+        <a class="btn btn-small mb20" href="{% url course_overview course.slug %}">{% trans "Go back to Course Overview" %}</a>
+    </div>
+{% endfor %}
+{% endblock %}

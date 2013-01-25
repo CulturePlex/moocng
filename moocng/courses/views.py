@@ -182,6 +182,15 @@ def announcement_detail(request, course_slug, announcement_slug):
     }, context_instance=RequestContext(request))
 
 
+def announcement_list(request, course_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+    announcements = course.announcement_set.all().order_by("-datetime")
+    return render_to_response('courses/announcement_list.html', {
+        'course': course,
+        'announcements': announcements,
+    }, context_instance=RequestContext(request))
+
+
 @login_required
 def transcript(request):
     course_list = request.user.courses_as_student.all()

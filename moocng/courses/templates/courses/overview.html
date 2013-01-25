@@ -126,6 +126,9 @@
                     <dd><a href="{% url courses.views.announcement_detail course.slug announcement.slug %}">{{ announcement.title|truncatewords:8 }}</a></dd>
                 {% endfor %}
             </dl>
+            {% if course.announcement_set.count > 5 %}
+                <a href="{% url announcement_list course.slug %}">{% trans "See all announcements" %}</a>
+            {% endif %}
         </div>
         {% endif %}
 
