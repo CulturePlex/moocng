@@ -14,7 +14,7 @@
                 {{ question.score }} {% trans "votes" %}, {{ question.responses.count }} {% trans "answers" %} -
                 {% get_comment_count for question as comment_count %}
                 {% if not comment_count %}
-                    <a href="javascript:{document.getElementById('box-comment-q{{ question.id }}').style.display='block';return false;}">{% trans "add comment" %}</a> |
+                    <a href="#" data-box-comment-id="box-comment-q{{ question.id }}">{% trans "add comment" %}</a> |
                 {% endif %}
                 {% workflow.can_delete_question user question as can_delete %}{% if can_delete %}
                     <a href="{% url discussion_question_delete course.slug question.id %}" title="{% trans "Delete this question" %}">{% trans "remove" %}</a> |
@@ -23,7 +23,7 @@
                 {{ question.created }}
             </small>
             <div class="box-comments" id="box-comment-q{{ question.id }}" {% if comment_count %}style="display:block;"{% endif %}>
-                {% include "discussion/comments.html" with comments_for=question next=question.get_absolute_url %}
+                {% include "discussion/comments.html" with comments_for=question comments_for_type='question' next=question.get_absolute_url %}
             </div>
         </div>
       </div>
@@ -58,7 +58,7 @@
                     <small style="float:right;">
                         {% get_comment_count for r as comment_count %}
                         {% if not comment_count %}
-                            <a href="javascript:{document.getElementById('box-comment-r{{ r.id }}').style.display='block';return false;}">{% trans "add comment" %}</a> |
+                            <a href="#" data-box-comment-id="box-comment-r{{ r.id }}">{% trans "add comment" %}</a> |
                         {% endif %}
                         {% workflow.can_delete_response user r as can_delete %}{% if can_delete %}
                             <a href="{% url discussion_response_delete course.slug r.id %}" title="{% trans "Delete this answer" %}">{% trans "remove" %}</a> |
@@ -67,7 +67,7 @@
                         {{ r.created }}
                     </small><br/>
                     <div class="box-comments" id="box-comment-r{{ r.id }}" {% if comment_count %}style="display:block;"{% endif %}>
-                        {% include "discussion/comments.html" with comments_for=r next=r.get_absolute_url %}
+                        {% include "discussion/comments.html" with comments_for=r comments_for_type='response' next=r.get_absolute_url %}
                     </div>
                 </div>
             </div>

@@ -7,9 +7,9 @@
     </p>
   {% endfor %}
 </dl>
-
 {% get_comment_form for comments_for as form %}
-<form action="{% comment_form_target %}" method="post">{% csrf_token %}
+{% with comment_list|length as comment_list_length %}
+<form action="{% comment_form_target %}" method="post" {% if comment_list_length %}style="display: none;"{% endif %} id="box-comment-{{ comments_for_type }}{{ comments_for.id }}">{% csrf_token %}
   {% if next %}<div><input type="hidden" name="next" value="{{ next }}" /></div>{% endif %}
     {{ form.comment }}
     <span style="display:none;">{{ form.honeypot }}</span>
@@ -21,3 +21,7 @@
     <input type="submit" name="post" class="btn" value="{% trans "Add Comment" %}" />
   </p>
 </form>
+{% if comment_list_length %}
+  <a href="#" data-box-comment-id="box-comment-{{ comments_for_type }}{{ comments_for.id }}">{% trans "add comment" %}</a>
+{% endif %}
+{% endwith %}

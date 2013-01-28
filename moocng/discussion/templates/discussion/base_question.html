@@ -3,6 +3,25 @@
 {% block extraheader %}
 <script type="text/javascript" src="{{ STATIC_URL }}tiny_mce/tiny_mce.js"></script>
 <script type="text/javascript" src="{% url tinymce-js "discussion" %}"></script>
+<script type="text/javascript">
+    (function ($) {
+        init = function () {
+            $("a[data-box-comment-id]").on("click", function () {
+                var $this = $(this),
+                    commentId = $this.data("box-comment-id")
+                    label = $this.text();
+                $("#"+ commentId).toggle();
+                if (label === "{% trans "add comment" %}") {
+                    $this.text("{% trans "cancel" %}")
+                } else {
+                    $this.text("{% trans "add comment" %}")
+                }
+                return false;
+            });
+        }
+        $(document).ready(init);
+    })(jQuery);
+</script>
 {% endblock %}
 
 {% block nav-course-discussion %}class="active"{% endblock %}
