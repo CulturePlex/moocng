@@ -26,7 +26,7 @@
         <div class="box">
           <h2>{% trans "Games" %}</h2>
           {% for career in careers %}
-            <a href="javascript:void();" data-career-id="{{ career.career_id }}" class="btn large primary career-id">{{ career.name }}</a>
+            <a href="javascript:void();" data-career-id="{{ career.career_id }}" data-career-code="{{ career.code }}" class="btn large primary career-id">{{ career.name }}</a>
           {% endfor %}
         </div>
         <div class="box">
