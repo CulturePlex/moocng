@@ -387,16 +387,20 @@ def teacheradmin_emails(request, course_slug):
 def teacheradmin_students(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     is_enrolled = course.students.filter(id=request.user.id).exists()
+    teachers_ids = [t["id"] for t in course.teachers.values("id")]
+    institutions = course.institutions
+    institutions_values = institutions.values("domains")
+    institutions_domains = [i["domains"] for i in institutions_values]
 
     students = course.students.all().order_by("first_name").order_by("username")
     students = [{
                 'id': s.id,
                 'username': s.get_full_name() or s.username,
                 'email': s.email,
-                'is_member': course.institutions.is_member(s),
-                'is_teacher': course.teachers.filter(id=s.id).exists(),
+                'is_member': institutions.is_member(s, institutions_domains),
+                'is_teacher': s.id in teachers_ids,
                 'gravatar': avatar_img_for_user(s, 20),
-                } for s in students]
+                } for s in students.select_related()]
 
     return render_to_response('teacheradmin/students.html', {
         'course': course,

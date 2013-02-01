@@ -30,18 +30,24 @@ from moocng.videos.utils import extract_YT_video_id
 
 class InstitutionManager(models.Manager):
 
-    def is_member(self, user):
+    def is_member(self, user, domains=None):
         if user.is_superuser:
             return True
         if u"@" in user.email and not user.email.endswith(u"@"):
             mail_domain = user.email.split(u"@")[1]
         else:
             return False
-        qs = self.get_query_set()
-        for institution in qs.all():
-            if mail_domain not in institution.domains:
-                return False
-        return True
+        if not domains:
+            qs = self.get_query_set()
+            for institution in qs.all():
+                if mail_domain not in institution.domains:
+                    return False
+            return True
+        else:
+            for institution_domain in domains:
+                if mail_domain not in institution_domain:
+                    return False
+            return True
 
 
 class Institution(Sortable):
