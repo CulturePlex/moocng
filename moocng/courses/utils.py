@@ -91,10 +91,10 @@ def calculate_kq_mark(kq, user):
 
 def normalize_kq_weight(kq):
     from moocng.courses.models import KnowledgeQuantum
-    unit_kq_list = KnowledgeQuantum.objects.filter(unit=kq.unit)
+    unit_kq_list = KnowledgeQuantum.objects.filter(unit=kq.unit).values("weight")
     total_weight = 0
     for unit_kq in unit_kq_list:
-        total_weight += unit_kq.weight
+        total_weight += unit_kq["weight"]
     if total_weight == 0:
         if len(unit_kq_list) == 0:
             return 0
@@ -134,11 +134,14 @@ def show_material_checker(course, user):
 
 def is_teacher(user, courses):
     is_teacher = False
-    if isinstance(courses, Course):
-        courses = [courses]
     if user.is_authenticated():
-        for course in courses:
-            is_teacher = is_teacher or course.teachers.filter(id=user.id).exists()
+        if isinstance(courses, Course):
+            is_teacher = courses.teachers.filter(id=user.id).exists()
+        else:
+            for course in courses.values("teachers__id").distinct():
+                if (course["teachers__id"] == user.id):
+                    is_teacher = True
+                    break
     return is_teacher
 
 
