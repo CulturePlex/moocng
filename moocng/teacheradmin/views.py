@@ -14,6 +14,7 @@
 
 from datetime import datetime
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.exceptions import ValidationError
@@ -29,12 +30,16 @@ from django.utils.translation import ugettext as _
 from gravatar.templatetags.gravatar import gravatar_img_for_email
 
 from moocng.accounts.templatetags.avatar import avatar_img_for_user
-from moocng.courses.models import Course, KnowledgeQuantum, Option, Announcement
-from moocng.courses.views import unit_badge_classes
+from moocng.api.mongodb import get_db
+from moocng.courses.models import (Course, KnowledgeQuantum, Option,
+                                   Announcement, Unit)
 from moocng.courses.forms import AnnouncementForm
+from moocng.courses.utils import (UNIT_BADGE_CLASSES, calculate_course_mark,
+                                  calculate_unit_mark, calculate_kq_mark)
 from moocng.teacheradmin.decorators import is_teacher_or_staff
-from moocng.teacheradmin.forms import CourseForm
+from moocng.teacheradmin.forms import CourseForm, MassiveEmailForm
 from moocng.teacheradmin.models import Invitation
+from moocng.teacheradmin.tasks import send_massive_email_task
 from moocng.teacheradmin.utils import (send_invitation,
                                        send_removed_notification)
 from moocng.videos.tasks import process_video_task
@@ -44,11 +49,149 @@ from moocng.videos.tasks import process_video_task
 def teacheradmin_stats(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     is_enrolled = course.students.filter(id=request.user.id).exists()
+    activity = get_db().get_collection('activity')
+
+    data = {
+        'enrolled': course.students.count(),
+        'started': 0,
+        'completed': 0
+    }
+
+    if getattr(course, "threshold", None) is not None:
+        # if the course doesn't support certification, then don't return the
+        # 'passed' stat since it doesn't apply
+        data['passed'] = 0
+        for student in course.students.all():
+            if calculate_course_mark(course, student)[0] >= float(course.threshold):
+                data['passed'] += 1
+
+    units = course.unit_set.all()
+    kqs = 0
+    for unit in units:
+        kqs += unit.knowledgequantum_set.count()
+
+    for student in course.students.all():
+        user_activity_list = activity.find_one({'user': student.id}, safe=True)
+
+        if user_activity_list is not None:
+            visited_kqs = user_activity_list.get('courses', {}).get(unicode(course.id), {}).get('kqs', [])
+
+            if len(visited_kqs) > 0:
+                data['started'] += 1
+            if len(visited_kqs) == kqs:
+                data['completed'] += 1
 
     return render_to_response('teacheradmin/stats.html', {
         'course': course,
         'is_enrolled': is_enrolled,
+        'initial_data': simplejson.dumps(data),
     }, context_instance=RequestContext(request))
+
+
+@is_teacher_or_staff
+def teacheradmin_stats_units(request, course_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+    data = []
+    use_old_calculus = False
+    if course.slug in settings.COURSES_USING_OLD_TRANSCRIPT:
+        use_old_calculus = True
+    activity = get_db().get_collection('activity')
+
+    unit_list = course.unit_set.all()
+    for unit in unit_list:
+        unit_data = {
+            'id': unit.id,
+            'title': unit.title,
+            'started': 0,
+            'completed': 0
+        }
+
+        if getattr(course, "threshold", None) is not None:
+            # if the course doesn't support certification, then don't return
+            # the 'passed' stat since it doesn't apply
+            unit_data['passed'] = 0
+            for student in course.students.all():
+                if calculate_unit_mark(unit, student, use_old_calculus)[0] >= float(course.threshold):
+                    unit_data['passed'] += 1
+
+        kqs = [kq.id for kq in unit.knowledgequantum_set.all()]
+        for student in course.students.all():
+            user_activity_list = activity.find_one({'user': student.id}, safe=True)
+
+            if user_activity_list is not None:
+                visited_kqs = user_activity_list.get('courses', {}).get(unicode(course.id), {}).get('kqs', [])
+
+                started = 0
+                completed = 0
+                for kq in visited_kqs:
+                    if int(kq) in kqs:
+                        started = 1
+                        completed += 1
+
+                unit_data['started'] += started
+                if len(kqs) == completed:
+                    unit_data['completed'] += 1
+
+        data.append(unit_data)
+
+    return HttpResponse(simplejson.dumps(data),
+                        mimetype='application/json')
+
+
+@is_teacher_or_staff
+def teacheradmin_stats_kqs(request, course_slug):
+    course = get_object_or_404(Course, slug=course_slug)
+    if not 'unit' in request.GET:
+        return HttpResponse(status=400)
+    unit = get_object_or_404(Unit, id=request.GET['unit'])
+    if not unit in course.unit_set.all():
+        return HttpResponse(status=400)
+    data = []
+    activity = get_db().get_collection('activity')
+    answers = get_db().get_collection('answers')
+
+    kq_list = unit.knowledgequantum_set.all()
+    for kq in kq_list:
+        kq_data = {
+            'id': kq.id,
+            'title': kq.title,
+            'viewed': 0
+        }
+
+        question = None
+        if kq.question_set.count() > 0:
+            question = kq.question_set.all()[0]
+            kq_data['answered'] = 0
+
+            if getattr(course, "threshold", None) is not None:
+                # if the course doesn't support certification, then don't
+                # return the 'passed' stat since it doesn't apply
+                kq_data['passed'] = 0
+                for student in course.students.all():
+                    if calculate_kq_mark(kq, student) >= float(course.threshold):
+                        kq_data['passed'] += 1
+
+        for student in course.students.all():
+            user_activity_list = activity.find_one({'user': student.id}, safe=True)
+
+            if user_activity_list is not None:
+                visited_kqs = user_activity_list.get('courses', {}).get(unicode(course.id), {}).get('kqs', [])
+                visited_kqs = [int(vkq) for vkq in visited_kqs]
+
+                if kq.id in visited_kqs:
+                    kq_data['viewed'] += 1
+
+            if question is not None:
+                user_answer_list = answers.find_one({'user': student.id}, safe=True)
+                if user_answer_list is not None:
+                    answer = user_answer_list.get('questions', {}).get(unicode(question.id))
+                    if answer:
+                        kq_data['answered'] += 1
+
+        data.append(kq_data)
+
+    return HttpResponse(simplejson.dumps(data),
+                        mimetype='application/json')
 
 
 @is_teacher_or_staff
@@ -59,7 +202,7 @@ def teacheradmin_units(request, course_slug):
     return render_to_response('teacheradmin/units.html', {
         'course': course,
         'is_enrolled': is_enrolled,
-        'unit_badge_classes': simplejson.dumps(unit_badge_classes),
+        'unit_badge_classes': simplejson.dumps(UNIT_BADGE_CLASSES),
     }, context_instance=RequestContext(request))
 
 
@@ -376,10 +519,39 @@ def teacheradmin_announcements_delete(request, course_slug, announ_slug):
 def teacheradmin_emails(request, course_slug):
     course = get_object_or_404(Course, slug=course_slug)
     is_enrolled = course.students.filter(id=request.user.id).exists()
+    students = course.students.count()
+
+    if request.method == 'POST':
+        form = MassiveEmailForm(request.POST)
+        if form.is_valid():
+            form.instance.course = course
+            form.instance.datetime = datetime.now()
+            form.save()
+
+            batch = 30
+            try:
+                batch = settings.MASSIVE_EMAIL_BATCH_SIZE
+            except AttributeError:
+                pass
+
+            batches = (course.students.count() / batch) + 1
+            students = course.students.all()
+            for i in range(batches):
+                init = batch * i
+                end = init + batch
+                students_ids = [s.id for s in students[init:end]]
+                send_massive_email_task.delay(form.instance.id, students_ids)
+
+            messages.success(request, _("The email has been queued, and it will be send in batches to every student in the course."))
+            return HttpResponseRedirect(reverse('teacheradmin_stats', args=[course_slug]))
+    else:
+        form = MassiveEmailForm()
 
     return render_to_response('teacheradmin/emails.html', {
         'course': course,
         'is_enrolled': is_enrolled,
+        'students': students,
+        'form': form,
     }, context_instance=RequestContext(request))
 
 

@@ -192,6 +192,10 @@ html.ie li.teacher img {
     height: 50px;
 }
 
+img.award {
+    margin-right: 10px;
+}
+
 .unit-n {}
 
 .unit-h {}
@@ -301,6 +305,13 @@ div#course-name {
     margin-top: 30px;
 }
 
+code {
+    padding: 2px 4px;
+    color: #333;
+    background-color: #F7F7F9;
+    border: 1px solid #E1E1E8;
+}
+
 input[type="checkbox"] {
     margin: -4px 0 0;
 }
@@ -361,7 +372,8 @@ input[type="checkbox"] {
     margin-right: 10px;
 }
 
-.teacheradmin-units div.loading.backdrop {
+.teacheradmin-units div.loading.backdrop,
+.teacheradmin-stats div.loading.backdrop {
     z-index: 99999999;
     position: fixed;
     top: 0px;
@@ -372,7 +384,8 @@ input[type="checkbox"] {
     background: black;
 }
 
-.teacheradmin-units div.loading.indicator {
+.teacheradmin-units div.loading.indicator,
+.teacheradmin-stats div.loading.indicator {
     z-index: 100000000;
     width: 54px;
     height: 55px;
@@ -387,6 +400,42 @@ input[type="checkbox"] {
 .teacheradmin-question fieldset textarea {
     height: auto;
     width: auto;
+}
+
+.teacheradmin-stats .pie.viewport svg {
+    height: 250px;
+}
+
+.teacheradmin-stats #tendencies .viewport svg,
+.teacheradmin-stats #units .viewport svg,
+.teacheradmin-stats #kqs .viewport svg {
+    height: 350px;
+}
+
+.teacheradmin-stats .stats-navigation {
+    margin-left: 20px;
+    position: relative;
+    top: -3px;
+}
+
+#complaints .errorlist {
+    color: red;
+    padding-top: 10px;
+}
+
+#complaints label[for=id_tos] {
+    display: inline;
+}
+
+#complaints .btn {
+    clear: both;
+    display: block !important;
+}
+
+#id_tos {
+    float: left;
+    margin-right: 5px;
+    margin-top: 2px;
 }
 
 .centered-scores {
@@ -412,6 +461,10 @@ input[type="checkbox"] {
     width: 80%;
     height: 50px;
     border: 1px dashed grey;
+}
+
+.errorlist {
+    color: red;
 }
 
 ul.errorlist li {

@@ -72,6 +72,27 @@ MOOC.App = Backbone.Router.extend({
 
         steps.push(function (callback) {
             var unitObj = MOOC.models.course.get(unit),
+                kqObj = unitObj.get("knowledgeQuantumList").get(kq);
+
+            if (kqObj.has("attachmentList")) {
+                callback();
+            } else {
+                MOOC.ajax.getAttachmentsByKQ(kqObj.get("id"), function (data, textStatus, jqXHR) {
+                    kqObj.set("attachmentList", (new MOOC.models.AttachmentList()).reset(_.map(data.objects, function (attachment) {
+                        var data = _.pick(attachment, "id", "attachment");
+                        return {
+                            id : parseInt(data.id, 10),
+                            url: data.attachment
+                        };
+                    })));
+
+                    callback();
+                });
+            }
+        });
+
+        steps.push(function (callback) {
+            var unitObj = MOOC.models.course.get(unit),
                 kqObj = unitObj.get("knowledgeQuantumList").get(kq),
                 kqView = MOOC.views.kqViews[kq];
 
@@ -176,18 +197,6 @@ MOOC.App = Backbone.Router.extend({
                 MOOC.views.unitViews[unitID] = unitView;
             }
 
-            unitObj.get("knowledgeQuantumList").each(function (kqObj) {
-                MOOC.ajax.getAttachmentsByKQ(kqObj.get("id"), function (data, textStatus, jqXHR) {
-                    kqObj.set("attachmentList", (new MOOC.models.AttachmentList()).reset(_.map(data.objects, function (attachment) {
-                        var data = _.pick(attachment, "id", "attachment");
-                        return {
-                            id : parseInt(data.id, 10),
-                            url: data.attachment
-                        };
-                    })));
-                });
-            });
-
             callback();
         });
     },
@@ -208,6 +217,7 @@ MOOC.init = function (course_id, KQRoute) {
 
     MOOC.router = new MOOC.App();
     MOOC.router.route("unit:unit", "unit");
+    MOOC.host = window.location.protocol + '//' + window.location.host;
     if (KQRoute) {
         MOOC.router.route("unit:unit/kq:kq", "kq");
         MOOC.router.route("unit:unit/kq:kq/q", "kqQ");

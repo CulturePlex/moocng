@@ -16,6 +16,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from tinymce.models import HTMLField
+
 from moocng.courses.models import Course
 
 
@@ -29,3 +31,23 @@ class Invitation(models.Model):
                                null=False)
     datetime = models.DateTimeField(verbose_name=_(u'Date and time'),
                                     blank=False, null=False)
+
+    class Meta:
+        verbose_name = _(u'invitation')
+        verbose_name_plural = _(u'invitations')
+
+
+class MassiveEmail(models.Model):
+
+    course = models.ForeignKey(Course, verbose_name=_(u'Course'),
+                               related_name='massive_emails', blank=False,
+                               null=False)
+    datetime = models.DateTimeField(verbose_name=_(u'Date and time'),
+                                    blank=False, null=False)
+    subject = models.CharField(verbose_name=_(u'Subject'), max_length=100,
+                               blank=False, null=False)
+    message = HTMLField(verbose_name=_(u'Content'))
+
+    class Meta:
+        verbose_name = _(u'massive email')
+        verbose_name_plural = _(u'massive emails')

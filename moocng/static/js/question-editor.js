@@ -81,13 +81,17 @@
                         "height: " + this.model.get("height") + "px;"
                     ].join(" ")
                 },
-                size ={};
+                size = {};
 
             if (optiontype === 'c' || optiontype === 'r') {
                 attributes.style = [
                     "width: " + MOOC.views.defaultSize + "px;",
                     "height: " + MOOC.views.defaultSize + "px;"
                 ].join(" ");
+
+                if (optiontype === 'r') {
+                    attributes.name = "radio";
+                }
 
                 if ((_.isString(sol) && sol.toLowerCase() === 'true') || (_.isBoolean(sol) && sol)) {
                     attributes.checked = 'checked';
@@ -144,7 +148,7 @@
             }
         },
 
-        calculate_size: function() {
+        calculate_size: function () {
             var optiontype = this.model.get('optiontype'),
                 width = this.model.get("width"),
                 height = this.model.get("height");
@@ -196,9 +200,16 @@
             }
             if (optiontype === 'c' || optiontype === 'r') {
                 value = _.isUndefined($input.attr('checked')) ? false : true;
+                if (value && optiontype === 'r') {
+                    // Update the solution stored in the other radio models
+                    $("input[type=radio]").filter(function (idx, radio) {
+                        return radio !== $input[0];
+                    }).trigger("change");
+                }
             } else {
                 value = $input.val();
             }
+            this.start();
             this.model.set(prop, value);
             this.model.save();
         }
@@ -228,12 +239,17 @@
         },
 
         render: function () {
-            var optiontype = this.model.get('optiontype');
+            var optiontype = this.model.get('optiontype'),
+                solution = this.model.get('solution');
+
+            if ((optiontype === 'c' || optiontype === 'r') && _.isString(solution)) {
+                solution = solution.toLowerCase() === "true";
+            }
 
             this.$el
                 .find('#option-id').html(this.model.get('id')).end()
                 .find('#option-optiontype').change(this.change_property_handler(['optiontype', false])).val(this.model.get('optiontype')).end()
-                .find('#option-solution').change(this.change_property_handler(['solution', false])).val(this.model.get('solution')).end()
+                .find('#option-solution').change(this.change_property_handler(['solution', false])).val(solution).end()
                 .find('#option-x').change(this.change_property_handler(['x', true])).val(this.model.get('x')).end()
                 .find('#option-y').change(this.change_property_handler(['y', true])).val(this.model.get('y'));
 
@@ -291,14 +307,27 @@
         },
 
         change_property: function (prop, numerical) {
-            var value = this.$el.find("#option-" + prop).val();
+            var value = this.$el.find("#option-" + prop).val(),
+                self = this;
             if (value) {
                 if (numerical) {
                     value = parseInt(value, 10);
+                } else if (value.toLowerCase() === "true" && this.model.get("optiontype") === 'r') {
+                    // Update the solution stored in the other radio models
+                    _.each(
+                        MOOC.views.current_index_view.collection.filter(function (model) {
+                            return model.get("optiontype") === 'r' && model.get("id") !== self.model.get("id");
+                        }),
+                        function (radio) {
+                            radio.set(prop, false);
+                        }
+                    );
                 }
+
                 if (this.model.get("optiontype") === 'l' && prop === "solution") {
                     prop = "text";
                 }
+
                 this.model.set(prop, value);
                 this.model.save();
             }

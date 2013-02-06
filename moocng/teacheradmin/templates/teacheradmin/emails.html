@@ -1,5 +1,82 @@
 {% extends "teacheradmin/base_teacheradmin.html" %}
 
-{% load i18n %}
+{% load i18n compress %}
 
 {% block nav-teacheradmin-emails %}active{% endblock %}
+
+{% block mainclass %}teacheradmin-emails{% endblock %}
+
+{% block extraheader %}
+    {{ form.media }}
+{% endblock %}
+
+{% block extrajs %}
+{% compress js %}
+<script type="text/javascript">
+$(document).ready(function () {
+    "use strict";
+
+    $("a.email").click(function (evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+
+        var $link = $(evt.target),
+            id = parseInt($link.attr("id").substring(1), 10);
+
+        $("#modal" + id + ".modal").modal();
+    });
+});
+</script>
+{% endcompress %}
+{% endblock %}
+
+{% block section %}
+<div class="row">
+    <div class="span10">
+        <h2>{% trans "Send an email to every student"%}</h2>
+        <div class="alert alert-block">
+            <h4>{% trans "Be aware!" %}</h4>
+            {% blocktrans %}You are about to send an email to <strong>{{ students }} students</strong>.{% endblocktrans %}
+        </div>
+        <form method="POST">{% csrf_token %}
+            {{ form }}
+            <div class="form-actions">
+                <input type="submit" class="btn btn-primary" value="{% trans "Send" %}" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="span10">
+        <h2>{% trans "Previous emails" %}</h2>
+        <ul>
+            {% for email in course.massive_emails.all %}
+            <li>{{ email.datetime }}: <a id="a{{ email.id }}" class="email" href="#">{{ email.subject }}</a></li>
+            {% empty %}
+            <li>{% trans "There aren't massive emails sent yet." %}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+{% for email in course.massive_emails.all %}
+<div class="modal hide fade" id="modal{{ email.id }}">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>{% trans "Sent at" %}: {{ email.datetime }}</h3>
+    </div>
+    <div class="modal-body">
+        <b>{% trans "Subject" %}:</b>
+        <div class="well well-small">{{ email.subject }}</div>
+        <b>{% trans "Content" %}:</b>
+        <div class="well well-small">{{ email.message|safe }}</div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">{% trans "Close" %}</button>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
