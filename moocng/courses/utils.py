@@ -125,7 +125,7 @@ def normalize_unit_weight(unit, use_old_calculus=False):
 
 def show_material_checker(course, user):
     show_material = False
-    in_time = course.start_date is None or date.today() > course.start_date
+    in_time = course.start_date is None or course.end_date > date.today() > course.start_date
     has_privileges = user.is_staff or course.teachers.filter(id=user.id).exists()
     if in_time or has_privileges:
         show_material = True

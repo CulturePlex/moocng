@@ -129,7 +129,7 @@ def course_classroom(request, course_slug):
 
     show_material = show_material_checker(course, request.user)
     if not show_material:
-        return HttpResponseForbidden(_('You are enrolled in this course but it has not yet begun') + course.start_date.strftime(' (%d / %m / %Y)'))
+        return HttpResponseForbidden(_('You are enrolled in this course but it is not available') + course.start_date.strftime(' (%d / %m / %Y') + ' - ' + course.end_date.strftime(' %d / %m / %Y)'))
 
     return render_to_response('courses/classroom.html', {
         'course': course,
